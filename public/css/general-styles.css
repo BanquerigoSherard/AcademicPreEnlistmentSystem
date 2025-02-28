@@ -1,0 +1,17 @@
+.active-link{
+    background-color: #216931;
+}
+
+.logout-btn:hover{
+    background-color: #216931;
+}
+
+.btn-color{
+    background-color: #216931;
+}
+
+div.dataTables_wrapper:nth-child(2){
+    height: calc(100vh - 100px);
+    overflow: auto;
+
+}
