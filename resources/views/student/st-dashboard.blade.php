@@ -23,7 +23,9 @@
                         <label>Subjects</label>
                         <select required class="selectpicker form-control" name="subjects[]" id="subject" data-live-search="true" title="Please select subject" data-hide-disabled="true" multiple>
                             @foreach ($allSubjects as $subject)
-                                <option value="{{ $subject->id }}">{{ $subject->subject_code }} - {{ $subject->description }}</option>
+                                @if ($subject->semester == $academicTerm->semester)
+                                    <option value="{{ $subject->id }}">{{ $subject->subject_code }} - {{ $subject->description }}</option>
+                                @endif
                             @endforeach
                         </select>
                     </div>
@@ -229,54 +231,46 @@
                                                         </tr>
                                                     @endif
                                                 @else
-                                                    <tr class="tRow">
+                                                    @php
+                                                        $bgColor = '';
+                                                        $pre_requisites = explode(',', $subject->pre_requisites);
+                                                        $failedSubj = [];
+                                                    @endphp
+                                                    @foreach ($allSubjects as $allSubject)
+                                                        @if (in_array($allSubject->subject_code, $pre_requisites))
+                                                            @foreach ($grades as $grade)
+                                                                @if ($allSubject->id == $grade->subject_id && $grade->student_id == Auth::user()->id && $grade->status == 1)
+                                                                    @if ((int)$grade->grade > 3.0)
+                                                                        @php
+                                                                        $bgColor = 'table-danger';
+                                                                        array_push($failedSubj, $allSubject->subject_code)
+                                                                        @endphp
+                                                                    @endif
+                                                                @endif
+                                                            @endforeach
+                                                        @endif
+                                                        
+                                                    @endforeach
+                                                    @php
+                                                    $failedSubjStr = implode(',', $failedSubj)
+                                                    @endphp
+                                                    <tr class="tRow {{$bgColor}}">
                                                         <td>{{$counter}}</td>
                                                         <td>{{ $subject->subject_code }}</td>
-                                                        <td>{{ $subject->description }}</td>
+                                                        <td>
+                                                            {{ $subject->description }}
+                                                        </td>
                                                         <td>Lec: {{$subject->lec_units}} Lab: {{$subject->lab_units}}<br>Total: {{$totalUnits}}</td>
                                                         <td>
-                                                            {{-- @if($subject->pre_requisites != '')
-                                                                @php
-                                                                    $preReqs = explode(',', $subject->pre_requisites);
-                                                                    $bgColor = "";
-                                                                    $gradee = '';
-                                                                @endphp
-                                                                @foreach ($allSubjects as $allSubject)
-                                                                    @php
-                                                                    $input = true;
-                                                                    @endphp
-                                                                    @foreach ($preReqs as $preReq)
-                                                                        @if ($allSubject->subject_code == $preReq)
-                                                                            @foreach ($grades as $grade)
-                                                                                @if ($grade->subject_id == $allSubject->id)
-                                                                                    @if ((int)$grade->grade > 3.0)
-                                                                                        @php
-                                                                                        $bgColor = "bg-danger";
-                                                                                        $input = false;
-                                                                                        $checked = "";
-                                                                                        $gradee = $allSubject->id;
-                                                                                        
-                                                                                        @endphp
-                                                                                        <span>Pre-requisite</span><span class="badge text-bg-danger">Test</span>
-                                                                                    @else
-                                                                                    <div class="custom-control custom-checkbox">
-                                                                                        <label class="checkbox">
-                                                                                            <input type="checkbox" checked name="subjectsSelected[]" value="{{ $subject->id }}"></label>
-                                                                                    </div>
-                                                                                    @endif
-                                                                                    
-                                                                                @endif
-                                                                            @endforeach
-                                                                        @endif
-                                                                    @endforeach
-                        
-                                                                @endforeach  
-                                                            @endif --}}
-
-                                                            <div class="custom-control custom-checkbox">
-                                                                <label class="checkbox">
+                                                            @if ($bgColor != '')
+                                                                You failed <span class="badge text-bg-warning">{{$failedSubjStr}}</span>
+                                                            @else
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <label class="checkbox">
                                                                     <input type="checkbox" checked name="subjectsSelected[]" value="{{ $subject->id }}"></label>
-                                                            </div>
+                                                                </div>
+                                                            @endif
+                                                            
                                                         </td>
                                                     </tr> 
                                                 @endif
