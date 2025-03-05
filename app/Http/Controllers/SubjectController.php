@@ -30,7 +30,7 @@ class SubjectController extends Controller
             'lab_units'=>'required',
             'year_lvl'=>'required',
             'semester'=>'required',
-        ]);
+        ]); 
 
         if($validator->fails()){
             return response()->json([

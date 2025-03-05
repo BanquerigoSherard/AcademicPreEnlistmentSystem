@@ -70,6 +70,11 @@ Route::group(['middleware' => ['auth', 'role:teacher||superadministrator']] ,fun
     // Import Students
     Route::post('/students/import-students', [ManageStudentController::class, 'import'])->name('import.students');
     Route::get('/students/fetch-students', [ManageStudentController::class, 'fetch'])->name('fetch.students');
+    Route::post('/students/save-student', [ManageStudentController::class, 'save'])->name('students.save');
+    Route::get('/students/edit-student/{id}', [ManageStudentController::class, 'edit'])->name('students.edit');
+    Route::post('/students/update-student', [ManageStudentController::class, 'update'])->name('students.update');
+    Route::get('/students/delete-student/{id}', [ManageStudentController::class, 'delete'])->name('students.delete');
+    
 
     // Enlistment Routes
     Route::get('/enlistment', function () {

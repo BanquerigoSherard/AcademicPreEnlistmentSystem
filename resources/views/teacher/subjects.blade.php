@@ -87,7 +87,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Add Subject</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -122,7 +122,7 @@
                                           @foreach ($courses as $course)
                                             <option value="{{ $course->id }}">{{ $course->name }}</option>
                                           @endforeach
-                                        </select>
+                                        </select> 
                                         <label for="selectCourse">Select Course</label>
                                     </div>
                                 </div>
@@ -184,7 +184,7 @@
                         </div>
 
                         <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                             <button type="submit" id="saveSubject" class="btn btn-primary">Save</button>
                         </div>
                     </form>
@@ -202,7 +202,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Edit Subject</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -301,7 +301,7 @@
                         </div>
 
                         <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary updateSubject">Save Changes</button>
                         </div>
                     </form>
@@ -319,7 +319,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Delete Subject</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -332,7 +332,7 @@
                     </div>
 
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                         <button type="submit" id="deleteSubject" class="btn btn-danger">Delete</button>
                     </div>
 
@@ -389,7 +389,7 @@
                     <div class="card-header">
                         <h3 class="card-title">List of subjects</h3>
 
-                        <button type="button" data-target="#add-new-subject" class="btn btn-sm btn-primary float-right" data-toggle="modal">
+                        <button type="button" class="btn btn-sm btn-primary float-right addSubjBtn">
                             <i class="nav-icon fas fa-solid fa-plus"></i>
                             <span>Add New</span>
                         </button>
@@ -527,6 +527,10 @@
 
     fetchSubjects();
 
+    
+    $(document).on('click', '.addSubjBtn', function (e) {
+        $('#add-new-subject').modal('show');
+    });
 
     $(function () {
         $.validator.setDefaults({
@@ -558,11 +562,10 @@
                         $('#lec_units').val('');
                         $('#lab_units').val('');
                         $('#saveSubject').text('Save');
-                        // $('#addSubjectForm').modal('hide');
 
                         fetchSubjects();
 
-                        console.log(response.test);
+                        $('#add-new-subject').modal('hide');
 
                         Toast.fire({
                             icon: 'success',
@@ -739,10 +742,6 @@
 
     });
 
-
-
-
-    
 
     $(function () {
         $.validator.setDefaults({

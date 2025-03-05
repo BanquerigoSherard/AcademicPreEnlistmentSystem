@@ -80,39 +80,68 @@
     @section('page-content')
         {{-- Modals --}}
 
-        {{-- Add Subject Modal --}}
-        <div class="modal fade" id="add-new-subject">
+        {{-- Add Student Modal --}}
+        <div class="modal fade" id="add-new-student">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Add Subject</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <h4 class="modal-title">Add Student</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     
-                    <form id="addSubjectForm" method="POST">
+                    <form id="addStudentForm" method="POST">
                         <div class="modal-body">
                             <div class="form-floating mb-3">
-                                <input type="text" name="subjectCode" required class="form-control" id="subjectCode" placeholder="Subject Code">
-                                <label for="subjectCode">Subject Code</label>
+                                <input type="text" name="student_id" required class="form-control" id="student_id" placeholder="Student ID">
+                                <label for="student_id">Student ID</label>
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input type="text" name="description" required class="form-control" id="description" placeholder="Description">
-                                <label for="description">Description</label>
+                                <input type="text" name="name" required class="form-control" id="name" placeholder="Name">
+                                <label for="name">Name</label>
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input type="number" name="units" required class="form-control" id="units" placeholder="Units">
-                                <label for="units">Units</label>
+                                <input type="email" name="email" required class="form-control" id="email" placeholder="Email">
+                                <label for="email">Email</label>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-9">
+                                    <div class="form-floating">
+                                        <select name="course" required class="form-select" id="selectCourse" aria-label="Floating label select example">
+                                          <option value="" selected>Select Course</option>
+                                          @foreach ($courses as $course)
+                                            <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                          @endforeach
+                                        </select>
+                                        <label for="selectCourse">Select Course</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-3">
+                                    <button title="Add New Course" class="btn btn-primary h-100 w-100">Add New</button>
+                                </div>
+                            </div>
+
+                            <div class="form-floating">
+                                <select name="year_lvl" required class="form-select" id="selectyear_lvl" aria-label="Floating label select example">
+                                  <option value="" selected>Select Year Level</option>
+                                    <option value="1">1st Year</option>
+                                    <option value="2">2nd Year</option>
+                                    <option value="3">3rd Year</option>
+                                    <option value="4">4th Year</option>
+                                </select>
+                                <label for="selectCourse">Select Year Level</label>
                             </div>
                             
                         </div>
 
                         <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" id="saveSubject" class="btn btn-primary">Save</button>
+                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" id="saveStudent" class="btn btn-primary">Save</button>
                         </div>
                     </form>
                 </div>
@@ -123,40 +152,69 @@
             <!-- /.modal -->
 
 
-        {{-- Edit Modal --}}
-        <div class="modal fade" id="edit-subject">
+        {{-- Edit Student Modal --}}
+        <div class="modal fade" id="edit-student">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Edit Subject</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <h4 class="modal-title">Edit Student</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     
-                    <form id="editSubjectForm" method="POST">
-                        <input type="hidden" name="subject_id_edit" id="subject_id_edit">
+                    <form id="editStudentForm" method="POST">
+                        <input type="hidden" name="studentIdEdit" id="studentIdEdit">
                         <div class="modal-body">
                             <div class="form-floating mb-3">
-                                <input type="text" name="subjectCode" required class="form-control" id="subjectCodeEdit" placeholder="Subject Code">
-                                <label for="subjectCodeEdit">Subject Code</label>
+                                <input type="text" name="student_id" required class="form-control" id="student_id_edit" placeholder="Student ID">
+                                <label for="student_id_edit">Student ID</label>
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input type="text" name="description" required class="form-control" id="descriptionEdit" placeholder="Description">
-                                <label for="descriptionEdit">Description</label>
+                                <input type="text" name="name" required class="form-control" id="name_edit" placeholder="Name">
+                                <label for="name_edit">Name</label>
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input type="number" name="units" required class="form-control" id="unitsEdit" placeholder="Units">
-                                <label for="unitsEdit">Units</label>
+                                <input type="email" name="email" required class="form-control" id="email_edit" placeholder="Email">
+                                <label for="email_edit">Email</label>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-9">
+                                    <div class="form-floating">
+                                        <select name="course" required class="form-select" id="selectCourseEdit" aria-label="Floating label select example">
+                                          <option value="" selected>Select Course</option>
+                                          @foreach ($courses as $course)
+                                            <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                          @endforeach
+                                        </select>
+                                        <label for="selectCourseEdit">Select Course</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-3">
+                                    <button title="Add New Course" class="btn btn-primary h-100 w-100">Add New</button>
+                                </div>
+                            </div>
+
+                            <div class="form-floating">
+                                <select name="year_lvl" required class="form-select" id="selectyear_lvl_edit" aria-label="Floating label select example">
+                                  <option value="" selected>Select Year Level</option>
+                                    <option value="1">1st Year</option>
+                                    <option value="2">2nd Year</option>
+                                    <option value="3">3rd Year</option>
+                                    <option value="4">4th Year</option>
+                                </select>
+                                <label for="selectyear_lvl_edit">Select Year Level</label>
                             </div>
                             
                         </div>
 
                         <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary updateSubject">Save Changes</button>
+                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary updateStudent">Save Changes</button>
                         </div>
                     </form>
                 </div>
@@ -167,27 +225,26 @@
             <!-- /.modal -->
 
 
-        {{-- Delete Modal --}}
-        <div class="modal fade" id="delete-subject">
+        {{-- Delete Student Modal --}}
+        <div class="modal fade" id="delete-student">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Delete Subject</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <h4 class="modal-title">Delete Student</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     
                     <div class="modal-body text-center">
-                        <input type="hidden" name="subject_id_delete" id="subject_id_delete">
                         <h2>Are you sure?</h2>
-                        <p>You are about to delete this subject. This action cannot be undone.</p>
+                        <p>You are about to delete this student. This action cannot be undone.</p>
 
                     </div>
 
                     <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <button type="submit" id="deleteSubject" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" id="deleteStudent" class="btn btn-danger">Delete</button>
                     </div>
 
                 </div>
@@ -235,7 +292,7 @@
                     <div class="card-header">
                         <h3 class="card-title">List of Students</h3>
 
-                        <button type="button" data-target="#add-new-student" class="btn btn-sm btn-primary float-right" data-toggle="modal">
+                        <button type="button" class="btn btn-sm btn-primary float-right addNewStudBtn">
                             <i class="nav-icon fas fa-solid fa-plus"></i>
                             <span>Add New</span>
                         </button>
@@ -380,6 +437,262 @@
 
     fetchStudents();
 
+    $(document).on('click', '.addNewStudBtn', function (e) {
+        $('#add-new-student').modal('show');
+    });
+
+    $(function () {
+        $.validator.setDefaults({
+            submitHandler: function () {
+                $('#saveStudent').text('');
+
+                $('#saveStudent').prop('disabled', true);
+
+                $('#saveStudent').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+                let formdata = new FormData($('#addStudentForm')[0]);
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/students/save-student",
+                    data: formdata,
+                    dataType: "json",
+                    contentType: false,
+                    processData: false,
+                    success: function (response){
+                        $('#student_id').val('');
+                        $('#name').val('');
+                        $('#email').val('');
+                        $('#course').val('');
+                        $('#year_lvl').text('Save');
+
+                        fetchStudents();
+
+                        $('#add-new-student').modal('hide');
+
+                        Swal.fire({
+                            title: response.message,
+                            text: "Password: "+response.password,
+                            icon: "success"
+                        });
+
+                        $('#saveStudent').prop('disabled', false);
+                    }
+
+                });
+            }
+        });
+        $('#addStudentForm').validate({
+            rules: {
+                student_id: {
+                    required: true,
+                },
+                name: {
+                    required: true,
+                },
+                email: {
+                    required: true,
+                },
+                course: {
+                    required: true
+                },
+                year_lvl: {
+                    required: true
+                }
+            },
+            messages: {
+                student_id: {
+                    required: "Student ID is required",
+                },
+                name: {
+                    required: "Please enter your name",
+                },
+                email: {
+                    required: "Please enter your email address",
+                },
+                course: {
+                    required: "Please select a course",
+                },
+                year_lvl: {
+                    required: "Please select year level",
+                },
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-floating').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+    });
+
+    $(document).on('click', '.editStudentBtn', function (e) {
+        e.preventDefault();
+
+        var studentID = $(this).val();
+
+        $('#studentIdEdit').val(studentID);
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/students/edit-student/"+studentID,
+            success: function (response){
+                if(response.status == 200){
+                    $('#student_id_edit').val(response.student.student_id);
+                    $('#name_edit').val(response.student.name);
+                    $('#email_edit').val(response.student.email);
+
+                    $('#selectCourseEdit').html('');
+                    $.each(response.courses, function(key, course){
+                        if(response.student.course_id == course.id){
+                            $('#selectCourseEdit').append('<option selected value="'+course.id+'">'+course.name+'</option>');
+                        }else{
+                            $('#selectCourseEdit').append('<option value="'+course.id+'">'+course.name+'</option>');
+                        }
+
+                    });
+                    
+                    $('#selectyear_lvl_edit').html('');
+                    var selected1 = '';
+                    var selected2 = '';
+                    var selected3 = '';
+                    var selected4 = '';
+                    if(response.student.year_level == 1){
+                        selected1 = 'selected';
+                    }else if(response.student.year_level == 2){
+                        selected2 = 'selected';
+                    }else if(response.student.year_level == 3){
+                        selected3 = 'selected';
+                    }else if(response.student.year_level == 4){
+                        selected4 = 'selected';
+                    }
+
+                    $('#selectyear_lvl_edit').append('<option '+selected1+' value="1">1st</option>\
+                                        <option '+selected2+' value="2">2nd</option>\
+                                        <option '+selected3+' value="3">3rd</option>\
+                                        <option '+selected4+' value="4">4th</option>');
+
+                }
+            }
+        });
+
+        $('#edit-student').modal('show');
+    });
+
+    $(function () {
+        $.validator.setDefaults({
+            submitHandler: function () {
+                $('.updateStudent').text('');
+
+                $('.updateStudent').prop('disabled', true);
+
+                $('.updateStudent').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+                let formdata = new FormData($('#editStudentForm')[0]);
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/students/update-student",
+                    data: formdata,
+                    dataType: "json",
+                    contentType: false,
+                    processData: false,
+                    success: function (response){
+                        $('#student_id_edit').val('');
+                        $('#name_edit').val('');
+                        $('#email_edit').val('');
+                        // $("#selectCourseEdit" ).selectable( "refresh" );
+                        // $("#selectyear_lvl_edit" ).selectable( "refresh" );
+                        
+                        
+                        $('.updateStudent').text('Save Changes');
+
+                        fetchStudents();
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message,
+                        })
+
+                        $('.updateStudent').prop('disabled', false);
+                        $('#edit-student').modal('hide');
+                    }
+
+                });
+            }
+        });
+        $('#editStudentForm').validate({
+            rules: {
+                student_id: {
+                    required: true,
+                },
+                name: {
+                    required: true,
+                },
+                email: {
+                    required: true,
+                },
+                course: {
+                    required: true
+                },
+                year_lvl: {
+                    required: true
+                }
+            },
+            messages: {
+                student_id: {
+                    required: "Student ID is required",
+                },
+                name: {
+                    required: "Please enter your name",
+                },
+                email: {
+                    required: "Please enter your email address",
+                },
+                course: {
+                    required: "Please select a course",
+                },
+                year_lvl: {
+                    required: "Please select year level",
+                },
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-floating').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+    });
+
     $(function () {
         $.validator.setDefaults({
             submitHandler: function () {
@@ -450,7 +763,55 @@
         });
     });
 
+    $(document).on('click', '.deleteStudentBtn', function (e) {
+        e.preventDefault();
 
+        var studentID = $(this).val();
+
+        $('#deleteStudent').val(studentID);
+
+        $('#delete-student').modal('show');
+    });
+
+    $(document).on('click', '#deleteStudent', function (e) {
+        e.preventDefault();
+
+        $('#deleteStudent').text('');
+
+        $('#deleteStudent').prop('disabled', true);
+
+        $('#deleteStudent').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...');
+
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        var studentID = $(this).val();
+
+        $.ajax({
+            type: "GET",
+            url: "/students/delete-student/"+studentID,
+            success: function (response){
+                if(response.status == 200){
+                    Toast.fire({
+                        icon: 'success',
+                        title: response.message,
+                    })
+
+                    $('#deleteStudent').text('Delete');
+
+                    $('#deleteStudent').prop('disabled', false);
+                    $('#delete-student').modal('hide');
+
+                    fetchStudents();
+                }
+            }
+        });
+
+    });
 </script>
 @endsection
   

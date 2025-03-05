@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 class StudentController extends Controller
 {
     public function index(){
-        $yearLvl = Auth::user()->year_level;
+        $yearLvl = Auth::user()->year_level; 
         $academicTerm = AcademicTerm::find(1);
         $allSubjects = Subject::all();
         $subjects = Subject::where([ ['year_lvl', '=', $yearLvl], ['semester', '=', $academicTerm->semester] ])->get();
