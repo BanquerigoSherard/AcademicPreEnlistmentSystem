@@ -83,7 +83,7 @@
 
         {{-- Add Subject Modal --}}
         <div class="modal fade" id="add-new-subject">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Add Subject</h4>
@@ -95,63 +95,85 @@
                     <form id="addSubjectForm" method="POST">
                         <div class="modal-body">
                             <div class="row mb-2">
-                                <div class="col-9"> 
-                                    <div class="form-floating">
-                                        <select name="prospectus" required class="form-select" id="selectProspectusVersion" aria-label="Floating label select example">
-                                          <option value="" selected>Select Version</option>
-                                          @foreach ($prospectus as $pros)
-                                            <option value="{{ $pros->id }}">{{ $pros->version }}</option>
-                                          @endforeach
-                                        </select>
-                                        <label for="selectProspectusVersion">Select Prospectus Version</label>
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div class="col-9"> 
+                                            <div class="prospectusSelect">
+                                                <div class="form-floating prospectusSelectInner">
+                                                    <select name="prospectus" required class="form-select" id="selectProspectusVersion" aria-label="Floating label select example">
+                                                    <option value="" selected>Select Version</option>
+                                                    @foreach ($prospectus as $pros)
+                                                        <option value="{{ $pros->id }}">{{ $pros->version }}</option>
+                                                    @endforeach
+                                                    </select>
+                                                    <label for="selectProspectusVersion">Select Prospectus Version*</label>
+                                                </div>
+                                            </div>
+        
+                                            
+                                        </div>
+            
+                                        <div class="col-3">
+                                            <button title="Add New Version" class="btn btn-primary h-100 w-100 addNewPros">Add New</button>
+                                        </div>
                                     </div>
-
-                                    
                                 </div>
-    
-                                <div class="col-3">
-                                    <button title="Add New Version" class="btn btn-primary h-100 w-100">Add New</button>
+
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div class="col-9">
+                                            <div class="coursesSelect">
+                                                <div class="form-floating coursesSelectInner">
+                                                    <select name="course" required class="form-select" id="selectCourse" aria-label="Floating label select example">
+                                                      <option value="" selected>Select Course</option>
+                                                      @foreach ($courses as $course)
+                                                        <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                                      @endforeach
+                                                    </select> 
+                                                    <label for="selectCourse">Select Course*</label>
+                                                </div>
+                                            </div>
+                                        </div>
+        
+                                        <div class="col-3">
+                                            <button title="Add New Course" class="btn btn-primary h-100 w-100 addNewCourse">Add New</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <input type="text" name="subject_code" required class="form-control" id="subject_code" placeholder="Subject Code">
+                                        <label for="subject_code">Subject Code*</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <input type="text" name="description" required class="form-control" id="description" placeholder="Description">
+                                        <label for="description">Description*</label>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-9">
-                                    <div class="form-floating">
-                                        <select name="course" required class="form-select" id="selectCourse" aria-label="Floating label select example">
-                                          <option value="" selected>Select Course</option>
-                                          @foreach ($courses as $course)
-                                            <option value="{{ $course->id }}">{{ $course->name }}</option>
-                                          @endforeach
-                                        </select> 
-                                        <label for="selectCourse">Select Course</label>
+                                <div class="col-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" name="lec_units" required class="form-control" id="lec_units" placeholder="lec_units">
+                                        <label for="lec_units">Lecture Units*</label>
                                     </div>
                                 </div>
 
-                                <div class="col-3">
-                                    <button title="Add New Course" class="btn btn-primary h-100 w-100">Add New</button>
+                                <div class="col-6">
+                                    <div class="form-floating mb-3">
+                                        <input type="number" name="lab_units" required class="form-control" id="lab_units" placeholder="lab_units">
+                                        <label for="lab_units">Lab Units*</label>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div class="form-floating mb-3 mt-3">
-                                <input type="text" name="subject_code" required class="form-control" id="subject_code" placeholder="Subject Code">
-                                <label for="subject_code">Subject Code</label>
-                            </div>
- 
-                            <div class="form-floating mb-3">
-                                <input type="text" name="description" required class="form-control" id="description" placeholder="Description">
-                                <label for="description">Description</label>
-                            </div>
-
-                            <div class="form-floating mb-3">
-                                <input type="number" name="lec_units" required class="form-control" id="lec_units" placeholder="lec_units">
-                                <label for="lec_units">Lecture Units</label>
-                            </div>
-
-                            <div class="form-floating mb-3">
-                                <input type="number" name="lab_units" required class="form-control" id="lab_units" placeholder="lab_units">
-                                <label for="lab_units">Lab Units</label>
-                            </div>
-
                             <div class="multiSelect mb-2">
                                 <label>Pre-requisites</label>
                                 <select class="selectpicker form-control" name="pre_requisites[]" id="pre-requisites" data-live-search="true" title="Select Subject" data-hide-disabled="true" data-actions-box="true" multiple>
@@ -161,26 +183,32 @@
                                 </select>
                             </div>
 
-                            <div class="form-floating mb-2">
-                                <select name="year_lvl" required class="form-select" id="year_lvl" aria-label="Floating label select example">
-                                  <option value="" selected>Select year level</option>
-                                  <option value="1">1st</option>
-                                  <option value="2">2nd</option>
-                                  <option value="3">3rd</option>
-                                  <option value="4">4th</option>
-                                </select>
-                                <label for="year_lvl">Select year level</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <select name="year_lvl" required class="form-select" id="year_lvl" aria-label="Floating label select example">
+                                          <option value="" selected>Select year level</option>
+                                          <option value="1">1st</option>
+                                          <option value="2">2nd</option>
+                                          <option value="3">3rd</option>
+                                          <option value="4">4th</option>
+                                        </select>
+                                        <label for="year_lvl">Select year level*</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <select name="semester" required class="form-select" id="semester" aria-label="Floating label select example">
+                                          <option value="" selected>Select semester</option>
+                                          <option value="1">1st</option>
+                                          <option value="2">2nd</option>
+                                        </select>
+                                        <label for="semester">Select semester*</label>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="form-floating">
-                                <select name="semester" required class="form-select" id="semester" aria-label="Floating label select example">
-                                  <option value="" selected>Select semester</option>
-                                  <option value="1">1st</option>
-                                  <option value="2">2nd</option>
-                                </select>
-                                <label for="semester">Select semester</label>
-                            </div>
-                            
                         </div>
 
                         <div class="modal-footer justify-content-between">
@@ -193,8 +221,7 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
-            <!-- /.modal -->
-
+        <!-- /.modal -->
 
         {{-- Edit Modal --}}
         <div class="modal fade" id="edit-subject">
@@ -310,10 +337,9 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
-            <!-- /.modal -->
+        <!-- /.modal -->
 
-
-        {{-- Delete Modal --}}
+        {{-- Delete Subject Modal --}}
         <div class="modal fade" id="delete-subject">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -341,15 +367,15 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
-            <!-- /.modal -->
+        <!-- /.modal -->
 
         {{-- Import Subject Modal --}}
-        <div class="modal fade importSubjects" id="import-subjects">
+        <div class="modal fade importSubjects" id="import-subjects-modal">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Import Subjects</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -364,14 +390,55 @@
                                 </span>
                             </div>
 
-                            <div class="input-group mb-3">
+                            <div class="row mb-2">
+                                <div class="col-9"> 
+                                    <div class="prospectusSelect">
+                                        <div class="form-floating prospectusSelectInnerImport import-inputs">
+                                            <select name="prospectus" required class="form-select" id="selectProspectusVersionImport" aria-label="Floating label select example">
+                                              <option value="" selected>Select Version</option>
+                                              @foreach ($prospectus as $pros)
+                                                <option value="{{ $pros->id }}">{{ $pros->version }}</option>
+                                              @endforeach
+                                            </select>
+                                            <label for="selectProspectusVersionImport">Select Prospectus Version*</label>
+                                        </div>
+                                    </div>
+                            
+                                </div>
+    
+                                <div class="col-3">
+                                    <button title="Add New Version" class="btn btn-primary h-100 w-100 addNewPros">Add New</button>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-9">
+                                    <div class="coursesSelect">
+                                        <div class="form-floating coursesSelectInnerImport import-inputs">
+                                            <select name="course" required class="form-select" id="selectCourseImport" aria-label="Floating label select example">
+                                            <option value="" selected>Select Course</option>
+                                            @foreach ($courses as $course)
+                                                <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                            @endforeach
+                                            </select> 
+                                            <label for="selectCourseImport">Select Course*</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-3">
+                                    <button title="Add New Course" class="btn btn-primary h-100 w-100 addNewCourse">Add New</button>
+                                </div>
+                            </div>
+
+                            <div class="input-group import-inputs mb-3">
                                 <input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="form-control" name="importFile" id="importFile">
                                 <label class="input-group-text" for="importFile">Import File</label>
                             </div>
                         </div>
 
                         <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                             <button type="submit" id="import" class="btn btn-success">Import</button>
                         </div>
                     </form>
@@ -380,7 +447,229 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
-            <!-- /.modal -->
+        <!-- /.modal -->
+
+        {{-- Prospectus Ver Modal --}}
+        <div class="modal fade" id="prospectus-version-modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Prospectus</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <form id="addProsForm" method="POST">
+                                    <input type="hidden" name="pros_id" id="pros_id" value="0">
+                                    <div class="row">
+                                        <div class="col-lg-5">
+                                            <div class="form-floating">
+                                                <input type="text" name="pros_version" required class="form-control" id="pros_version" placeholder="Subject Code">
+                                                <label for="pros_version">Version*</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-5">
+                                            <div class="form-floating">
+                                                <input type="text" name="effectivity" required class="form-control" id="effectivity" placeholder="Subject Code">
+                                                <label for="effectivity">Effectivity*</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-2">
+                                            <button type="submit" id="savePros" class="btn btn-primary h-100 w-100">Save</button>
+                                        </div>
+                                    </div>
+                                    
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Prospectus Versions</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id="prosTable" class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Version</th>
+                                            <th>Effectivity</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pros_tbody">
+                                        {{-- Table Content --}}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Version</th>
+                                            <th>Effectivity</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                    </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
+        {{-- Delete Prospectus Modal --}}
+        <div class="modal fade" id="delete-prospectus-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete Prospectus</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <div class="modal-body text-center">
+                        <h2>Are you sure?</h2>
+                        <p>You are about to delete this version. This action cannot be undone.</p>
+
+                    </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" id="deleteProspectus" class="btn btn-danger">Delete</button>
+                    </div>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
+        {{-- Courses Modal --}}
+        <div class="modal fade" id="courses-modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Courses</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <form id="addCourseForm" method="POST">
+                                    <input type="hidden" name="course_save_id" id="course_save_id" value="0">
+                                    <div class="row">
+                                        <div class="col-lg-5">
+                                            <div class="form-floating">
+                                                <input type="text" name="course_name" required class="form-control" id="course_name" placeholder="Select Course">
+                                                <label for="course_name">Name*</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-5">
+                                            <div class="form-floating">
+                                                <input type="text" name="course_abbr" required class="form-control" id="course_abbr" placeholder="Select Course">
+                                                <label for="course_abbr">Abbreviation*</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-2">
+                                            <button type="submit" id="saveCourse" class="btn btn-primary h-100 w-100">Save</button>
+                                        </div>
+                                    </div>
+                                    
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Courses</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id="coursesTable" class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Abbreviation</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="courses_tbody">
+                                        {{-- Table Content --}}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Abbreviation</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                    </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
+        {{-- Delete Course Modal --}}
+        <div class="modal fade" id="delete-course-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete Course</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <div class="modal-body text-center">
+                        <h2>Are you sure?</h2>
+                        <p>You are about to delete this course. This action cannot be undone.</p>
+
+                    </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" id="deleteCourse" class="btn btn-danger">Delete</button>
+                    </div>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
         {{-- End Modals --}}
 
         <div class="row">
@@ -394,7 +683,7 @@
                             <span>Add New</span>
                         </button>
 
-                        <button type="button" data-target="#import-subjects" class="btn btn-sm btn-success float-right me-2" data-toggle="modal">
+                        <button type="button" data-target="#import-subjects" class="importSubjBtn btn btn-sm btn-success float-right me-2" data-toggle="modal">
                             <i class="nav-icon fas fa-solid fa-file-import"></i>
                             <span>Import</span>
                         </button>
@@ -527,7 +816,6 @@
 
     fetchSubjects();
 
-    
     $(document).on('click', '.addSubjBtn', function (e) {
         $('#add-new-subject').modal('show');
     });
@@ -827,7 +1115,6 @@
         });
     });
 
-
     $(document).on('click', '.deleteSubjectBtn', function (e) {
         e.preventDefault();
 
@@ -878,6 +1165,10 @@
 
     });
 
+    $(document).on('click', '.importSubjBtn', function (e) {
+        $('#import-subjects-modal').modal('show');
+    });
+
     $(function () {
         $.validator.setDefaults({
             submitHandler: function () {
@@ -903,9 +1194,11 @@
                     contentType: false,
                     processData: false,
                     success: function (response){
-                        
+                        $('#selectProspectusVersionImport').val('');
+                        $('#selectCourseImport').val('');
                         $('#importFile').val('');
                         $('#import').text('Save');
+                        
 
 
                         fetchSubjects();
@@ -916,7 +1209,7 @@
                         })
 
                         $('#import').prop('disabled', false);
-                        $('#import-subjects').modal('hide');
+                        $('#import-subjects-modal').modal('hide');
                     }
 
                 });
@@ -924,11 +1217,23 @@
         });
         $('#importSubjectForm').validate({
             rules: {
+                prospectus: {
+                    required: true,
+                },
+                course: {
+                    required: true,
+                },
                 importFile: {
                     required: true,
                 },
             },
             messages: {
+                prospectus: {
+                    required: "Please select prospectus version",
+                },
+                course: {
+                    required: "Please select course",
+                },
                 importFile: {
                     required: "Please choose an excel file",
                     accept: "Please choose a valid excel file"
@@ -937,7 +1242,7 @@
             errorElement: 'span',
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
-                element.closest('.input-group').append(error);
+                element.closest('.import-inputs').append(error);
             },
             highlight: function (element, errorClass, validClass) {
                 $(element).addClass('is-invalid');
@@ -948,6 +1253,472 @@
         });
     });
 
+    // CRUD Functions for Prospectus
+    function fetchPros(){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/subjects/fetch-prospectus",
+            dataType: "json",
+            success: function (response){
+                $('#pros_tbody').html('');
+
+                if(response.status == 200){
+                    
+                    var counter = 0;
+                    $.each(response.prospectus, function(key, pros){
+                        counter += 1;
+                        $('#pros_tbody').append('<tr>\
+                                <td>'+counter+'</td>\
+                                <td data-version="'+pros.version+'">'+pros.version+'</td>\
+                                <td data-effectivity="'+pros.effectivity+'">'+pros.effectivity+'</td>\
+                                <td data-id="'+pros.id+'">\
+                                    <Button type="button" value="'+pros.id+'" class="deleteProsBtn btn btn-sm btn-danger">\
+                                        <i class="fas fa-trash"></i>\
+                                    </Button>\
+                                </td>\
+                            </tr>')
+                    });
+                    
+
+                    if(response.prospectus.length == 0){
+                        $('#pros_tbody').append('<tr>\
+                                <td colspan="10">\
+                                    <div class="imgCont">\
+                                        <div class="imgEmpty d-flex justify-content-center align-items-center flex-column" style="height: calc(100% - 120px);">\
+                                            <img src="{{ url("images/empty.png") }}" alt="" style="height: 150px;">\
+                                            <p class="mt-2 fw-bold fs-4" style="color: #7777;">No Records</p>\
+                                        </div>\
+                                    </div>\
+                                </td>\
+                            </tr>');
+                    }else{
+                        if ( $.fn.dataTable.isDataTable( '#prosTable' ) ) {
+                            table = $('#prosTable').DataTable();
+                        }
+                        else {
+                            $("#prosTable").DataTable({
+                                "responsive": true, "lengthChange": false, "autoWidth": false,
+                                "buttons": ["csv","pdf", "print"]
+                                }).buttons().container().appendTo('#prosTable_wrapper .col-md-6:eq(0)');
+
+                            }
+                        }
+
+                        
+                        
+                    }
+
+                }
+
+                
+
+        });
+
+    }
+
+    $(document).on('click', '.addNewPros', function (e) {
+        e.preventDefault();
+        $('#pros_id').val("0");
+        fetchPros();
+        $('#prospectus-version-modal').modal('show');
+    });
+
+    $(function () {
+        $.validator.setDefaults({
+            submitHandler: function () {
+                $('#savePros').text('');
+
+                $('#savePros').prop('disabled', true);
+
+                $('#savePros').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+                let formdata = new FormData($('#addProsForm')[0]);
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/subjects/save-pros",
+                    data: formdata,
+                    dataType: "json",
+                    contentType: false,
+                    processData: false,
+                    success: function (response){
+                        $('#pros_version').val('');
+                        $('#effectivity').val('');
+                        $('#savePros').text('Save');
+
+                        fetchPros();
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message,
+                        })
+
+                        $(".prospectusSelect").load(location.href + " .prospectusSelectInner");
+                        $(".prospectusSelect").load(location.href + " .prospectusSelectInnerImport");
+
+
+                        $('#savePros').prop('disabled', false);
+                    }
+
+                });
+            }
+        });
+        $('#addProsForm').validate({
+            rules: {
+                pros_version: {
+                    required: true,
+                },
+                effectivity: {
+                    required: true,
+                },
+            },
+            messages: {
+                pros_version: {
+                    required: "Please input prospectus version",
+                },
+                effectivity: {
+                    required: "Please input effectivity",
+                },
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-floating').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+    });
+
+    $(document).on('click', '#prosTable tbody tr', function (e) {
+        e.preventDefault();
+
+        var data = { version: '', effectivity: '', id: '' };
+        
+        $(this).children('td').each(function() {
+            var id = $(this).data('id');
+            if (id) {
+                data.id = id;
+            } 
+
+            var version = $(this).data('version');
+            if (version) {
+                data.version = version;
+            }
+            
+            var effectivity = $(this).data('effectivity');
+            if (effectivity) {
+                data.effectivity = effectivity;
+            }      
+        });
+        
+        $('#pros_id').val(data.id);
+        $('#pros_version').val(data.version);
+        $('#effectivity').val(data.effectivity);
+
+    });
+
+    $(document).on('click', '.deleteProsBtn', function (e) {
+        e.preventDefault();
+        $('#deleteProspectus').val($(this).val());
+        $('#delete-prospectus-modal').modal('show');
+    });
+
+    $(document).on('click', '#deleteProspectus', function (e) {
+        e.preventDefault();
+
+        $('#deleteProspectus').text('');
+
+        $('#deleteProspectus').prop('disabled', true);
+
+        $('#deleteProspectus').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...');
+
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        var prosID = $(this).val();
+
+        $.ajax({
+            type: "GET",
+            url: "/subjects/delete-prospectus/"+prosID,
+            success: function (response){
+                if(response.status == 200){
+                    Toast.fire({
+                        icon: 'success',
+                        title: response.message,
+                    })
+
+                    $('#deleteProspectus').text('Delete');
+
+                    $('#deleteProspectus').prop('disabled', false);
+                    $('#delete-prospectus-modal').modal('hide');
+
+                    $('#pros_id').val("0");
+                    $('#pros_version').val("");
+                    $('#effectivity').val("");
+
+                    $(".prospectusSelect").load(location.href + " .prospectusSelect");
+                    $(".prospectusSelect").load(location.href + " .prospectusSelectInnerImport");
+
+                    fetchPros();
+                }
+            }
+        });
+
+    });
+
+    // Select Courses CRUD Functions
+    function fetchCourses(){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/subjects/fetch-courses",
+            dataType: "json",
+            success: function (response){
+                $('#courses_tbody').html('');
+
+                if(response.status == 200){
+                    
+                    var counter = 0;
+                    $.each(response.courses, function(key, course){
+                        counter += 1;
+                        $('#courses_tbody').append('<tr>\
+                                <td>'+counter+'</td>\
+                                <td data-name="'+course.name+'">'+course.name+'</td>\
+                                <td data-abbreviation="'+course.abbreviation+'">'+course.abbreviation+'</td>\
+                                <td data-id="'+course.id+'">\
+                                    <Button type="button" value="'+course.id+'" class="deleteCourseBtn btn btn-sm btn-danger">\
+                                        <i class="fas fa-trash"></i>\
+                                    </Button>\
+                                </td>\
+                            </tr>')
+                    });
+                    
+
+                    if(response.courses.length == 0){
+                        $('#courses_tbody').append('<tr>\
+                                <td colspan="10">\
+                                    <div class="imgCont">\
+                                        <div class="imgEmpty d-flex justify-content-center align-items-center flex-column" style="height: calc(100% - 120px);">\
+                                            <img src="{{ url("images/empty.png") }}" alt="" style="height: 150px;">\
+                                            <p class="mt-2 fw-bold fs-4" style="color: #7777;">No Records</p>\
+                                        </div>\
+                                    </div>\
+                                </td>\
+                            </tr>');
+                    }else{
+                        if ( $.fn.dataTable.isDataTable( '#coursesTable' ) ) {
+                            table = $('#coursesTable').DataTable();
+                        }
+                        else {
+                            $("#coursesTable").DataTable({
+                                "responsive": true, "lengthChange": false, "autoWidth": false,
+                                "buttons": ["csv","pdf", "print"]
+                                }).buttons().container().appendTo('#coursesTable_wrapper .col-md-6:eq(0)');
+
+                            }
+                        }
+
+                        
+                        
+                    }
+
+                }
+
+                
+
+        });
+
+    }
+
+    $(document).on('click', '.addNewCourse', function (e) {
+        e.preventDefault();
+        $('#course_save_id').val("0");
+        fetchCourses();
+        $('#courses-modal').modal('show');
+    });
+
+    $(function () {
+        $.validator.setDefaults({
+            submitHandler: function () {
+                $('#saveCourse').text('');
+
+                $('#saveCourse').prop('disabled', true);
+
+                $('#saveCourse').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+                let formdata = new FormData($('#addCourseForm')[0]);
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/subjects/save-course",
+                    data: formdata,
+                    dataType: "json",
+                    contentType: false,
+                    processData: false,
+                    success: function (response){
+                        $('#course_name').val('');
+                        $('#course_abbr').val('');
+                        $('#saveCourse').text('Save');
+
+                        fetchCourses();
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message,
+                        })
+
+                        $(".coursesSelect").load(location.href + " .coursesSelectInner");
+                        $(".coursesSelect").load(location.href + " .coursesSelectInnerImport");
+
+                        $('#saveCourse').prop('disabled', false);
+                    }
+
+                });
+            }
+        });
+        $('#addCourseForm').validate({
+            rules: {
+                course_name: {
+                    required: true,
+                },
+                course_abbr: {
+                    required: true,
+                },
+            },
+            messages: {
+                course_name: {
+                    required: "Please input course name",
+                },
+                course_abbr: {
+                    required: "Please input course abbreviation",
+                },
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-floating').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+    });
+
+    $(document).on('click', '#coursesTable tbody tr', function (e) {
+        e.preventDefault();
+
+        var data = { name: '', abbreviation: '', id: '' };
+        
+        $(this).children('td').each(function() {
+            var id = $(this).data('id');
+            if (id) {
+                data.id = id;
+            } 
+
+            var name = $(this).data('name');
+            if (name) {
+                data.name = name;
+            }
+            
+            var abbreviation = $(this).data('abbreviation');
+            if (abbreviation) {
+                data.abbreviation = abbreviation;
+            }      
+        });
+        
+        $('#course_save_id').val(data.id);
+        $('#course_name').val(data.name);
+        $('#course_abbr').val(data.abbreviation);
+
+    });
+
+    $(document).on('click', '.deleteCourseBtn', function (e) {
+        e.preventDefault();
+        $('#deleteCourse').val($(this).val());
+        $('#delete-course-modal').modal('show');
+    });
+
+    $(document).on('click', '#deleteCourse', function (e) {
+        e.preventDefault();
+
+        $('#deleteCourse').text('');
+
+        $('#deleteCourse').prop('disabled', true);
+
+        $('#deleteCourse').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...');
+
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        var courseID = $(this).val();
+
+        $.ajax({
+            type: "GET",
+            url: "/subjects/delete-course/"+courseID,
+            success: function (response){
+                if(response.status == 200){
+                    Toast.fire({
+                        icon: 'success',
+                        title: response.message,
+                    })
+
+                    $('#deleteCourse').text('Delete');
+
+                    $('#deleteCourse').prop('disabled', false);
+                    $('#delete-course-modal').modal('hide');
+
+                    $('#course_save_id').val("0");
+                    $('#course_name').val("");
+                    $('#course_abbr').val("");
+
+                    $(".coursesSelect").load(location.href + " .coursesSelectInner");
+                    $(".coursesSelect").load(location.href + " .coursesSelectInnerImport");
+
+                    fetchCourses();
+                }
+            }
+        });
+
+    });
 
 </script>
 @endsection

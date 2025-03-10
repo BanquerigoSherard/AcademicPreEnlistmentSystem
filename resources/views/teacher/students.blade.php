@@ -95,34 +95,34 @@
                         <div class="modal-body">
                             <div class="form-floating mb-3">
                                 <input type="text" name="student_id" required class="form-control" id="student_id" placeholder="Student ID">
-                                <label for="student_id">Student ID</label>
+                                <label for="student_id">Student ID*</label>
                             </div>
 
                             <div class="form-floating mb-3">
                                 <input type="text" name="name" required class="form-control" id="name" placeholder="Name">
-                                <label for="name">Name</label>
+                                <label for="name">Name*</label>
                             </div>
 
                             <div class="form-floating mb-3">
                                 <input type="email" name="email" required class="form-control" id="email" placeholder="Email">
-                                <label for="email">Email</label>
+                                <label for="email">Email*</label>
                             </div>
 
                             <div class="row mb-2">
                                 <div class="col-9">
-                                    <div class="form-floating">
+                                    <div class="form-floating coursesSelectAdd">
                                         <select name="course" required class="form-select" id="selectCourse" aria-label="Floating label select example">
                                           <option value="" selected>Select Course</option>
                                           @foreach ($courses as $course)
                                             <option value="{{ $course->id }}">{{ $course->name }}</option>
                                           @endforeach
-                                        </select>
-                                        <label for="selectCourse">Select Course</label>
+                                        </select> 
+                                        <label for="selectCourse">Select Course*</label>
                                     </div>
                                 </div>
 
                                 <div class="col-3">
-                                    <button title="Add New Course" class="btn btn-primary h-100 w-100">Add New</button>
+                                    <button title="Add New Course" class="btn btn-primary h-100 w-100 addNewCourse">Add New</button>
                                 </div>
                             </div>
 
@@ -134,7 +134,7 @@
                                     <option value="3">3rd Year</option>
                                     <option value="4">4th Year</option>
                                 </select>
-                                <label for="selectCourse">Select Year Level</label>
+                                <label for="selectCourse">Select Year Level*</label>
                             </div>
                             
                         </div>
@@ -183,7 +183,7 @@
 
                             <div class="row mb-2">
                                 <div class="col-9">
-                                    <div class="form-floating">
+                                    <div class="form-floating coursesSelectEdit">
                                         <select name="course" required class="form-select" id="selectCourseEdit" aria-label="Floating label select example">
                                           <option value="" selected>Select Course</option>
                                           @foreach ($courses as $course)
@@ -195,7 +195,7 @@
                                 </div>
 
                                 <div class="col-3">
-                                    <button title="Add New Course" class="btn btn-primary h-100 w-100">Add New</button>
+                                    <button title="Add New Course" class="addNewCourse btn btn-primary h-100 w-100">Add New</button>
                                 </div>
                             </div>
 
@@ -222,7 +222,7 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
-            <!-- /.modal -->
+        <!-- /.modal -->
 
 
         {{-- Delete Student Modal --}}
@@ -252,29 +252,55 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
-            <!-- /.modal -->
+        <!-- /.modal -->
 
-        {{-- Import Subject Modal --}}
+        {{-- Import Students Modal --}}
         <div class="modal fade importStudents" id="import-students">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Import Students</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
-                    </div>
+                    </div> 
                     
                     <form id="importStudentForm" method="POST" enctype="multipart/form-data">
                         <div class="modal-body">
-                            <div class="input-group mb-3">
+                            <div class="alert alert-warning" role="alert">
+                                Please use this excel template: 
+                                <span class="text-primary">
+                                    <a href="{{url('excel/StudentImport.xlsx')}}" class="text-primary" download>Download Template</a>
+                                    <i class="right fas fa-download"></i>
+                                </span>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-9">
+                                    <div class="form-floating import-inputs coursesSelectImport">
+                                        <select name="course" required class="form-select" id="selectCourseImport" aria-label="Floating label select example">
+                                          <option value="" selected>Select Course</option>
+                                          @foreach ($courses as $course)
+                                            <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                          @endforeach
+                                        </select> 
+                                        <label for="selectCourseImport">Select Course*</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-3">
+                                    <button title="Add New Course" class="btn btn-primary h-100 w-100 addNewCourse">Add New</button>
+                                </div>
+                            </div>
+
+                            <div class="input-group import-inputs mb-3">
                                 <input type="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="form-control" name="importFile" id="importFile">
                                 <label class="input-group-text" for="importFile">Import File</label>
                             </div>
                         </div>
 
                         <div class="modal-footer justify-content-between">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
                             <button type="submit" id="import" class="btn btn-success">Import</button>
                         </div>
                     </form>
@@ -283,7 +309,349 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
-            <!-- /.modal -->
+        <!-- /.modal -->
+
+        {{-- View Student Info Modal --}}
+        <div class="modal fade" id="view-student-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Student Information</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <div class="modal-body">
+                        <div class="relative">
+                            {{-- start --}}
+        
+                            <div id="content">
+                                <div class="container">
+                                <section class="bar">
+                                <div class="container p-0">
+                                    <div class="row flex-lg-nowrap">
+                                        <div class="col p-0">
+                                        
+                                            <div class="row">
+                                                <div class="col m-0">
+                                                    <div class="card m-0">
+                                                        <div class="card-body">
+                                                            <div class="e-profile">
+                                                                <div class="row">
+                                                                    <div class="col-12 col-sm-auto
+                                                                            mb-3">
+                                                                        <div class="mx-auto" style="width: 140px;">
+                                                                            <div class="d-flex justify-content-center align-items-center rounded thumbnail-wrapper" style="height:140px; background-color:rgb(233, 236, 239);">
+                                                                                <span style="color:rgb(166, 168, 170); font: bold 85pt Arial;">
+                                                                                    <i class="nav-icon fas fa-user"></i>
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    
+                                                                    <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
+                                                                        <div class="text-center text-sm-left mb-2 mb-sm-0">
+                                                                            <div class="tit d-flex">
+                                                                                <h4 class="pt-sm-2 pb-1 mb-0 text-nowrap me-2" style="color: #888;">Student ID: </h4><h4 class="pt-sm-2 pb-1 mb-0 text-nowrap" id="selectedStudentId"></h4>
+                                                                            </div>
+                                                                            
+                                                                            <div class="own d-flex">
+                                                                                <p class="me-2">Name: </p><p class="mb-0 text-black" id="selectedStudentName"></p>
+                                                                            </div>
+        
+                                                                            <div class="sz d-flex">
+                                                                                <p class="me-2">Course: </p><p class="mb-0 text-black" id="selectedStudentCourse"></p>
+                                                                            </div>
+        
+                                                                            <div class="du d-flex">
+                                                                                <p class="me-2">Year Level: </p><p class="mb-0 text-black" id="selectedStudentYearLevel"></p>
+                                                                            </div>
+                                                                            
+                                                                            
+                                                                            <div class="mt-2">
+                                                                                {{-- Buttons --}}
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="text-center text-sm-right">
+                                                                            <span>Status: </span><span class="badge badge-success">Enlisted</span>
+                                                                        </div>
+                                                                    </div>
+                        
+                                                                </div>
+        
+                                                                {{-- Start --}}
+        
+                                                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                                                    <li class="nav-item" role="presentation">
+                                                                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">Details</button>
+                                                                    </li>
+                                                                    <li class="nav-item share-item" role="presentation">
+                                                                    <button class="nav-link" id="share-tab-id" data-bs-toggle="tab" data-bs-target="#grades" type="button" role="tab" aria-controls="grades" aria-selected="false">Grades</button>
+                                                                    </li>
+                                                                </ul>
+                                                                <div class="tab-content" id="myTabContent">
+                                                                    <div class="px-3 pt-3 tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+                                                                        
+                                                                        <div class="row">
+                                                                            <div class="col p-0">
+                                                                                <form id="editStudentFormView" method="POST">
+                                                                                    <input type="hidden" name="studentIdEdit" id="studentIdEditView">
+                                                                                    <div class="modal-body p-0 viewStudentInfo">
+                                                                                        <div class="row">
+                                                                                            <div class="col-lg-6">
+                                                                                                <div class="form-floating mb-3">
+                                                                                                    <input type="text" name="student_id" required class="form-control" id="student_id_edit_view" placeholder="Student ID">
+                                                                                                    <label for="student_id_edit_view">Student ID</label>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div class="col-lg-6">
+                                                                                                <div class="form-floating mb-3">
+                                                                                                    <input type="text" name="name" required class="form-control" id="name_edit_view" placeholder="Name">
+                                                                                                    <label for="name_edit_view">Name</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        
+                                                                                        <div class="form-floating mb-3">
+                                                                                            <input type="email" name="email" required class="form-control" id="email_edit_view" placeholder="Email">
+                                                                                            <label for="email_edit_view">Email</label>
+                                                                                        </div>
+
+                                                                                        <div class="row">
+                                                                                            <div class="col-lg-6">
+                                                                                                <div class="row mb-2">
+                                                                                                    <div class="col-9">
+                                                                                                        <div class="form-floating coursesSelectView">
+                                                                                                            <select name="course" required class="form-select" id="selectCourseEditView" aria-label="Floating label select example">
+                                                                                                                <option value="" selected>Select Course</option>
+                                                                                                                @foreach ($courses as $course)
+                                                                                                                <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                                                                                                @endforeach
+                                                                                                            </select>
+                                                                                                            <label for="selectCourseEditView">Select Course</label>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                    
+                                                                                                    <div class="col-3">
+                                                                                                        <button title="Add New Course" class="addNewCourse btn btn-primary h-100 w-100">Add New</button>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                            <div class="col-lg-6">
+                                                                                                <div class="form-floating">
+                                                                                                    <select name="year_lvl" required class="form-select" id="selectyear_lvl_edit_view" aria-label="Floating label select example">
+                                                                                                        <option value="" selected>Select Year Level</option>
+                                                                                                        <option value="1">1st Year</option>
+                                                                                                        <option value="2">2nd Year</option>
+                                                                                                        <option value="3">3rd Year</option>
+                                                                                                        <option value="4">4th Year</option>
+                                                                                                    </select>
+                                                                                                    <label for="selectyear_lvl_edit_view">Select Year Level</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                            
+                                                                                    <div class="modal-footer justify-content-between float-right px-0">
+                                                                                        <button type="submit" class="btn btn-primary updateStudentView">Save Changes</button>
+                                                                                    </div>
+                                                                                </form>
+                                                                            </div>
+                                                                        </div>
+                                                                    
+                                                                    </div>
+        
+                                                                    <div class="p-3 tab-pane fade share-tab" id="grades" role="tabpanel" aria-labelledby="grades-tab">
+                                                                        <div class="row">
+                                                                            <div class="col">
+                                                                                <div class="mt-2">
+                                                                                    <div class="row">
+                                                                                        <div class="col-lg-6">
+                                                                                            <div class="gradeWrapper">
+                                                                                                <h4>SY 2024-2025 (First Semester)</h4>
+                                                                                                <table class="table table-bordered">
+                                                                                                    <thead class="table-secondary">
+                                                                                                        <tr>
+                                                                                                            <th>Subject Code</th>
+                                                                                                            <th>Description</th>
+                                                                                                            <th>Grade</th>
+                                                                                                        </tr>
+                                                                                                    </thead>
+                                                                                                    <tbody>
+                                                                                                        <tr>
+                                                                                                            <td>MIT 204</td>
+                                                                                                            <td>TECHNOLOGY AND PROJECT MANAGEMENT</td>
+                                                                                                            <td></td>
+                                                                                                        </tr>
+                                                                                                        <tr>
+                                                                                                            <td>MIT 201</td>
+                                                                                                            <td>ADVANCED OPERATING SYSTEMS AND NETWORKING</td>
+                                                                                                            <td></td>
+                                                                                                        </tr>
+                                                                                                    </tbody>
+                                                                                                </table>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    
+                                                                                    
+                                                                                </div>                                                                 
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+        
+                                                                </div>
+        
+        
+                                                                {{-- End --}}
+                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                        
+                                </section>
+                                </div>
+                            </div>
+                        
+                            {{-- end --}}
+        
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
+        {{-- Courses Modal --}}
+        <div class="modal fade" id="courses-modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Courses</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <form id="addCourseForm" method="POST">
+                                    <input type="hidden" name="course_save_id" id="course_save_id" value="0">
+                                    <div class="row">
+                                        <div class="col-lg-5">
+                                            <div class="form-floating">
+                                                <input type="text" name="course_name" required class="form-control" id="course_name" placeholder="Select Course">
+                                                <label for="course_name">Name*</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-5">
+                                            <div class="form-floating">
+                                                <input type="text" name="course_abbr" required class="form-control" id="course_abbr" placeholder="Select Course">
+                                                <label for="course_abbr">Abbreviation*</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-2">
+                                            <button type="submit" id="saveCourse" class="btn btn-primary h-100 w-100">Save</button>
+                                        </div>
+                                    </div>
+                                    
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Courses</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id="coursesTable" class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Abbreviation</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="courses_tbody">
+                                        {{-- Table Content --}}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Name</th>
+                                            <th>Abbreviation</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                    </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
+        {{-- Delete Course Modal --}}
+        <div class="modal fade" id="delete-course-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete Course</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <div class="modal-body text-center">
+                        <h2>Are you sure?</h2>
+                        <p>You are about to delete this course. This action cannot be undone.</p>
+
+                    </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" id="deleteCourse" class="btn btn-danger">Delete</button>
+                    </div>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
         {{-- End Modals --}}
 
         <div class="row">
@@ -297,7 +665,7 @@
                             <span>Add New</span>
                         </button>
 
-                        <button type="button" data-target="#import-students" class="btn btn-sm btn-success float-right me-2" data-toggle="modal">
+                        <button type="button" class="importStudBtn btn btn-sm btn-success float-right me-2">
                             <i class="nav-icon fas fa-solid fa-file-import"></i>
                             <span>Import</span>
                         </button>
@@ -380,6 +748,9 @@
                                 <td>'+student.email+'</td>\
                                 <td>'+yearLvl+'</td>\
                                 <td>\
+                                    <Button type="button" value="'+student.id+'" class="viewStudentBtn btn btn-sm btn-warning">\
+                                        <i class="fas fa-eye"></i>\
+                                    </Button>\
                                     <Button type="button" value="'+student.id+'" class="editStudentBtn btn btn-sm btn-primary">\
                                         <i class="fas fa-pen"></i>\
                                     </Button>\
@@ -693,6 +1064,10 @@
         });
     });
 
+    $(document).on('click', '.importStudBtn', function (e) {
+        $('#import-students').modal('show');
+    });
+
     $(function () {
         $.validator.setDefaults({
             submitHandler: function () {
@@ -739,11 +1114,17 @@
         });
         $('#importStudentForm').validate({
             rules: {
+                course: {
+                    required: true,
+                },
                 importFile: {
                     required: true,
                 },
             },
             messages: {
+                course: {
+                    required: "Please select course",
+                },
                 importFile: {
                     required: "Please choose an excel file",
                     accept: "Please choose a valid excel file"
@@ -752,7 +1133,7 @@
             errorElement: 'span',
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
-                element.closest('.input-group').append(error);
+                element.closest('.import-inputs').append(error);
             },
             highlight: function (element, errorClass, validClass) {
                 $(element).addClass('is-invalid');
@@ -812,6 +1193,410 @@
         });
 
     });
+
+    // Select Courses CRUD Functions
+    function fetchCourses(){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/subjects/fetch-courses",
+            dataType: "json",
+            success: function (response){
+                $('#courses_tbody').html('');
+
+                if(response.status == 200){
+                    
+                    var counter = 0;
+                    $.each(response.courses, function(key, course){
+                        counter += 1;
+                        $('#courses_tbody').append('<tr>\
+                                <td>'+counter+'</td>\
+                                <td data-name="'+course.name+'">'+course.name+'</td>\
+                                <td data-abbreviation="'+course.abbreviation+'">'+course.abbreviation+'</td>\
+                                <td data-id="'+course.id+'">\
+                                    <Button type="button" value="'+course.id+'" class="deleteCourseBtn btn btn-sm btn-danger">\
+                                        <i class="fas fa-trash"></i>\
+                                    </Button>\
+                                </td>\
+                            </tr>')
+                    });
+                    
+
+                    if(response.courses.length == 0){
+                        $('#courses_tbody').append('<tr>\
+                                <td colspan="10">\
+                                    <div class="imgCont">\
+                                        <div class="imgEmpty d-flex justify-content-center align-items-center flex-column" style="height: calc(100% - 120px);">\
+                                            <img src="{{ url("images/empty.png") }}" alt="" style="height: 150px;">\
+                                            <p class="mt-2 fw-bold fs-4" style="color: #7777;">No Records</p>\
+                                        </div>\
+                                    </div>\
+                                </td>\
+                            </tr>');
+                    }else{
+                        if ( $.fn.dataTable.isDataTable( '#coursesTable' ) ) {
+                            table = $('#coursesTable').DataTable();
+                        }
+                        else {
+                            $("#coursesTable").DataTable({
+                                "responsive": true, "lengthChange": false, "autoWidth": false,
+                                "buttons": ["csv","pdf", "print"]
+                                }).buttons().container().appendTo('#coursesTable_wrapper .col-md-6:eq(0)');
+
+                            }
+                        }
+
+                        
+                        
+                    }
+
+                }
+
+                
+
+        });
+
+    }
+
+    $(document).on('click', '.addNewCourse', function (e) {
+        e.preventDefault();
+        $('#course_save_id').val("0");
+        fetchCourses();
+        $('#courses-modal').modal('show');
+    });
+
+    $(function () {
+        $.validator.setDefaults({
+            submitHandler: function () {
+                $('#saveCourse').text('');
+
+                $('#saveCourse').prop('disabled', true);
+
+                $('#saveCourse').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+                let formdata = new FormData($('#addCourseForm')[0]);
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/subjects/save-course",
+                    data: formdata,
+                    dataType: "json",
+                    contentType: false,
+                    processData: false,
+                    success: function (response){
+                        $('#course_name').val('');
+                        $('#course_abbr').val('');
+                        $('#saveCourse').text('Save');
+
+                        fetchCourses();
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message,
+                        })
+
+                        $(".coursesSelectAdd").load(location.href + " .coursesSelectAdd");
+                        $(".coursesSelectImport").load(location.href + " .coursesSelectImport");
+                        $(".coursesSelectEdit").load(location.href + " .coursesSelectEdit");
+                        $(".coursesSelectView").load(location.href + " .coursesSelectView");
+
+                        $('#saveCourse').prop('disabled', false);
+                    }
+
+                });
+            }
+        });
+        $('#addCourseForm').validate({
+            rules: {
+                course_name: {
+                    required: true,
+                },
+                course_abbr: {
+                    required: true,
+                },
+            },
+            messages: {
+                course_name: {
+                    required: "Please input course name",
+                },
+                course_abbr: {
+                    required: "Please input course abbreviation",
+                },
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-floating').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+    });
+
+    $(document).on('click', '#coursesTable tbody tr', function (e) {
+        e.preventDefault();
+
+        var data = { name: '', abbreviation: '', id: '' };
+        
+        $(this).children('td').each(function() {
+            var id = $(this).data('id');
+            if (id) {
+                data.id = id;
+            } 
+
+            var name = $(this).data('name');
+            if (name) {
+                data.name = name;
+            }
+            
+            var abbreviation = $(this).data('abbreviation');
+            if (abbreviation) {
+                data.abbreviation = abbreviation;
+            }      
+        });
+        
+        $('#course_save_id').val(data.id);
+        $('#course_name').val(data.name);
+        $('#course_abbr').val(data.abbreviation);
+
+    });
+
+    $(document).on('click', '.deleteCourseBtn', function (e) {
+        e.preventDefault();
+        $('#deleteCourse').val($(this).val());
+        $('#delete-course-modal').modal('show');
+    });
+
+    $(document).on('click', '#deleteCourse', function (e) {
+        e.preventDefault();
+
+        $('#deleteCourse').text('');
+
+        $('#deleteCourse').prop('disabled', true);
+
+        $('#deleteCourse').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...');
+
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        var courseID = $(this).val();
+
+        $.ajax({
+            type: "GET",
+            url: "/subjects/delete-course/"+courseID,
+            success: function (response){
+                if(response.status == 200){
+                    Toast.fire({
+                        icon: 'success',
+                        title: response.message,
+                    })
+
+                    $('#deleteCourse').text('Delete');
+
+                    $('#deleteCourse').prop('disabled', false);
+                    $('#delete-course-modal').modal('hide');
+
+                    $('#course_save_id').val("0");
+                    $('#course_name').val("");
+                    $('#course_abbr').val("");
+
+                    $(".coursesSelectAdd").load(location.href + " .coursesSelectAdd");
+                    $(".coursesSelectImport").load(location.href + " .coursesSelectImport");
+                    $(".coursesSelectEdit").load(location.href + " .coursesSelectEdit");
+                    $(".coursesSelectView").load(location.href + " .coursesSelectView");
+
+                    fetchCourses();
+                }
+            }
+        });
+
+    });
+
+    $(document).on('click', '.viewStudentBtn', function (e) {
+        e.preventDefault();
+
+        var studentID = $(this).val();
+
+        $('#studentIdEditView').val(studentID);
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/students/edit-student/"+studentID,
+            success: function (response){
+                if(response.status == 200){
+
+                    $('#student_id_edit_view').val(response.student.student_id);
+                    $('#name_edit_view').val(response.student.name);
+                    $('#email_edit_view').val(response.student.email);
+
+                    $('#selectCourseEditView').html('');
+                    var courseVal = '';
+                    $.each(response.courses, function(key, course){
+                        if(response.student.course_id == course.id){
+                            $('#selectCourseEditView').append('<option selected value="'+course.id+'">'+course.name+'</option>');
+                            courseVal = course.name;
+                            
+                        }else{
+                            $('#selectCourseEditView').append('<option value="'+course.id+'">'+course.name+'</option>');
+                        }
+
+                    });
+
+                    var yearLvl = "";
+                    $('#selectyear_lvl_edit_view').html('');
+                    var selected1 = '';
+                    var selected2 = '';
+                    var selected3 = '';
+                    var selected4 = '';
+                    if(response.student.year_level == 1){
+                        selected1 = 'selected';
+                        yearLvl = "1st";
+                    }else if(response.student.year_level == 2){
+                        selected2 = 'selected';
+                        yearLvl = "2nd";
+                    }else if(response.student.year_level == 3){
+                        selected3 = 'selected';
+                        yearLvl = "3rd";
+                    }else if(response.student.year_level == 4){
+                        selected4 = 'selected';
+                        yearLvl = "4th";
+                    }
+
+                    $('#selectyear_lvl_edit_view').append('<option '+selected1+' value="1">1st</option>\
+                                        <option '+selected2+' value="2">2nd</option>\
+                                        <option '+selected3+' value="3">3rd</option>\
+                                        <option '+selected4+' value="4">4th</option>');
+
+
+                    $('#selectedStudentId').html(response.student.student_id);
+                    $('#selectedStudentName').html(response.student.name);
+                    $('#selectedStudentCourse').html(courseVal);
+                    $('#selectedStudentYearLevel').html(yearLvl);
+
+                    
+
+                }
+            }
+        });
+
+        $('#view-student-modal').modal('show');
+    });
+
+    $(function () {
+        $.validator.setDefaults({
+            submitHandler: function () {
+                $('.updateStudentView').text('');
+
+                $('.updateStudentView').prop('disabled', true);
+
+                $('.updateStudentView').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+                let formdata = new FormData($('#editStudentFormView')[0]);
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/students/update-student",
+                    data: formdata,
+                    dataType: "json",
+                    contentType: false,
+                    processData: false,
+                    success: function (response){         
+                        $('.updateStudentView').text('Save Changes');
+
+                        $(".viewStudentInfo").load(location.href + ".viewStudentInfo");
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message,
+                        })
+
+                        $('.updateStudentView').prop('disabled', false);
+                    }
+
+                });
+            }
+        });
+        $('#editStudentFormView').validate({
+            rules: {
+                student_id: {
+                    required: true,
+                },
+                name: {
+                    required: true,
+                },
+                email: {
+                    required: true,
+                },
+                course: {
+                    required: true
+                },
+                year_lvl: {
+                    required: true
+                }
+            },
+            messages: {
+                student_id: {
+                    required: "Student ID is required",
+                },
+                name: {
+                    required: "Please enter your name",
+                },
+                email: {
+                    required: "Please enter your email address",
+                },
+                course: {
+                    required: "Please select a course",
+                },
+                year_lvl: {
+                    required: "Please select year level",
+                },
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-floating').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+    });
+
+    
 </script>
 @endsection
   

@@ -156,13 +156,17 @@ class SubjectController extends Controller
 
     public function import(Request $request){
         $validator = Validator::make($request->all(), [
+            'prospectus'=>'required',
+            'course'=>'required',
             'importFile'=>'required|file',
         ]);
 
         if($request->hasFile('importFile')){
+            $pros_id = htmlspecialchars($request->input('prospectus'));
+            $course_id = htmlspecialchars($request->input('course'));
 
             $file = $request->file('importFile');
-            Excel::import(new SubjectImport, $file);
+            Excel::import(new SubjectImport($pros_id, $course_id), $file);
 
             
 
@@ -173,4 +177,130 @@ class SubjectController extends Controller
         }
 
     }
+
+
+    // Prospectus Functions
+    public function fetchProspectus(){
+
+        $prospectus = Prospectus::all();
+
+        if($prospectus){
+            return response()->json([
+                'status'=>200,
+                'prospectus'=>$prospectus,
+            ]);
+        }
+
+    }
+
+    public function savePros(Request $request){
+        $validator = Validator::make($request->all(), [
+            'pros_version'=>'required',
+            'effectivity'=>'required',
+        ]); 
+
+        if($validator->fails()){
+            return response()->json([
+                'status'=>400,
+                'errors'=>$validator->messages(),
+            ]);
+        }else{
+            $pros_id = $request->input('pros_id');
+
+            if($pros_id == "0"){
+                $prospectus = new Prospectus;
+                $prospectus->version = htmlspecialchars($request->input('pros_version'));
+                $prospectus->effectivity = htmlspecialchars($request->input('effectivity'));
+    
+                $prospectus->save();
+            }else{
+                $prospectus = Prospectus::find($pros_id);
+                $prospectus->version = htmlspecialchars($request->input('pros_version'));
+                $prospectus->effectivity = htmlspecialchars($request->input('effectivity'));
+    
+                $prospectus->update();
+            }
+
+            return response()->json([
+                'status'=>200,
+                'message'=>'Prospectus Saved Successfully',
+            ]);
+
+        }
+    }
+
+    public function deletePros($id){
+        $prospectus = Prospectus::find($id);
+
+        if($prospectus){
+            $prospectus->delete();
+            return response()->json([
+                'status'=>200,
+                'message'=> "Prospectus Deleted Successfully",
+            ]);
+        }
+    }
+
+    // Courses Functions
+    public function fetchCourses(){
+
+        $courses = Course::all();
+
+        if($courses){
+            return response()->json([
+                'status'=>200,
+                'courses'=>$courses,
+            ]);
+        }
+
+    }
+
+    public function saveCourse(Request $request){
+        $validator = Validator::make($request->all(), [
+            'course_name'=>'required',
+            'course_abbr'=>'required',
+        ]); 
+
+        if($validator->fails()){
+            return response()->json([
+                'status'=>400,
+                'errors'=>$validator->messages(),
+            ]);
+        }else{
+            $course_save_id = $request->input('course_save_id');
+
+            if($course_save_id == "0"){
+                $course = new Course;
+                $course->name = htmlspecialchars($request->input('course_name'));
+                $course->abbreviation = htmlspecialchars($request->input('course_abbr'));
+    
+                $course->save();
+            }else{
+                $course = Course::find($course_save_id);
+                $course->name = htmlspecialchars($request->input('course_name'));
+                $course->abbreviation = htmlspecialchars($request->input('course_abbr'));
+    
+                $course->update();
+            }
+
+            return response()->json([
+                'status'=>200,
+                'message'=>'Course Saved Successfully',
+            ]);
+
+        }
+    }
+
+    public function deleteCourse($id){
+        $course = Course::find($id);
+
+        if($course){
+            $course->delete();
+            return response()->json([
+                'status'=>200,
+                'message'=> "Course Deleted Successfully",
+            ]);
+        }
+    }
+    
 }

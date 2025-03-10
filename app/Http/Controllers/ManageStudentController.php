@@ -18,13 +18,15 @@ class ManageStudentController extends Controller
 
     public function import(Request $request){
         $validator = Validator::make($request->all(), [
+            'course'=>'required',
             'importFile'=>'required|file',
         ]);
 
         if($request->hasFile('importFile')){
+            $course_id = htmlspecialchars($request->input('course'));
 
             $file = $request->file('importFile');
-            Excel::import(new StudentImport, $file);filePath: 
+            Excel::import(new StudentImport($course_id), $file);filePath: 
 
             return response()->json([
                 'status'=>200,
@@ -49,7 +51,6 @@ class ManageStudentController extends Controller
 
     public function save(Request $request){
 
-        
         $validator = Validator::make($request->all(), [
             'student_id' => ['required', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],

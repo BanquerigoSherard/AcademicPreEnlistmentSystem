@@ -13,6 +13,13 @@ class StudentImport implements ToCollection, WithHeadingRow
     /**
     * @param Collection $collection
     */
+
+    private $course_id;
+
+    public function __construct($course_id)
+    {
+        $this->course_id = $course_id;
+    }
     public function collection(Collection $collection)
     {
         foreach ($collection as $row) 
@@ -25,13 +32,17 @@ class StudentImport implements ToCollection, WithHeadingRow
                     'student_id' => $row['studentid'],
                     'name' => $row['name'],
                     'email' => $row['email'],
+                    'course_id' => $this->course_id,
+                    'year_level' => $row['yearlvl'],
                 ]);
             }else{
                 $user = User::create([
                     'student_id' => $row['studentid'],
                     'name' => $row['name'],
                     'email' => $row['email'],
+                    'course_id' => $this->course_id,
                     'password' => Hash::make($row['studentid']),
+                    'year_level' => $row['yearlvl'],
                 ]);
 
                 $user->addRole('student');

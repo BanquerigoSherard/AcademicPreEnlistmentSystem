@@ -82,6 +82,16 @@ Route::group(['middleware' => ['auth', 'role:teacher||superadministrator']] ,fun
     })->name('enlistment'); 
 
     Route::get('/enlistment/fetch-subjects/{id}', [EnlistmentController::class, 'fetchSubjects'])->name('enlistment.fetchSubjects');
+    
+    // Prospectus Crud Routes
+    Route::get('/subjects/fetch-prospectus', [SubjectController::class, 'fetchProspectus'])->name('subjects.fetchProspectus');
+    Route::post('/subjects/save-pros', [SubjectController::class, 'savePros'])->name('subjects.savePros');
+    Route::get('/subjects/delete-prospectus/{id}', [SubjectController::class, 'deletePros'])->name('subjects.deletePros');
+
+    // Courses CRUD Routes
+    Route::get('/subjects/fetch-courses', [SubjectController::class, 'fetchCourses'])->name('subjects.fetchCourses');
+    Route::post('/subjects/save-course', [SubjectController::class, 'saveCourse'])->name('subjects.saveCourse');
+    Route::get('/subjects/delete-course/{id}', [SubjectController::class, 'deleteCourse'])->name('subjects.deleteCourse');
 });
 // Save Subject
 Route::post('/enlistment/save-subjects/{id}', [EnlistmentController::class, 'savesubjects'])->name('enlistment.savesubjects');
