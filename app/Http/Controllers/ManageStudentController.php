@@ -7,6 +7,9 @@ use App\Imports\StudentImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\User;
 use App\Models\Course;
+use App\Models\Subject;
+use App\Models\Grade;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class ManageStudentController extends Controller
@@ -98,12 +101,19 @@ class ManageStudentController extends Controller
     public function edit($id){
         $student = User::find($id);
         $courses = Course::all();
-
+        $grades = Grade::where([ ['student_id', '=', $id] ])->orderBy('id', 'DESC')->get();
+        $subjects = [];
+        foreach ($grades as $grade) {
+            $subject = Subject::find($grade->subject_id);
+            array_push($subjects, $subject);
+        }
         if($student){
             return response()->json([
                 'status'=>200,
                 'student'=>$student,
                 'courses'=>$courses,
+                'subjects'=>$subjects,
+                'grades'=>$grades,
             ]);
         }
     }

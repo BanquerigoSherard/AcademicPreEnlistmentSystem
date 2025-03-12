@@ -16,6 +16,7 @@ class StudentController extends Controller
         $academicTerm = AcademicTerm::find(1);
         $allSubjects = Subject::all();
         $subjects = Subject::where([ ['year_lvl', '=', $yearLvl], ['semester', '=', $academicTerm->semester] ])->get();
+        // $subjects = Subject::where([['semester', '=', $academicTerm->semester] ])->get();
         $grades = Grade::where([ ['student_id', '=', Auth::user()->id] ])->get();
         $course = Course::find(Auth::user()->course_id);
         
@@ -77,11 +78,11 @@ class StudentController extends Controller
     }
 
     public function savegrades(Request $request){
+        $academicTerm = AcademicTerm::where('id', 1)->first();
         $grades = $request->input('grades');
         $user = Auth::user();
         $subj_ids = $request->input('subjectIDs');
         $grade_checker = 0;
-        $testCounter = 0;
         for($i=0; $i<count($grades); $i++) {
             $gradeCheck = Grade::where([
                 ['student_id', '=', $user->id],
@@ -98,6 +99,8 @@ class StudentController extends Controller
                     $grade->student_id = $user->id;
                     $grade->subject_id = $subj_ids[$i];
                     $grade->grade = $grades[$i];
+                    $grade->school_year = $academicTerm->school_year;
+                    $grade->semester = $academicTerm->semester;
                     $grade->save();
                 }  
             }

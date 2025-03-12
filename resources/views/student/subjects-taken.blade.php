@@ -14,65 +14,78 @@
                     
                         <div class="row">
                             <div class="col-12">
-                                <div class="card card-secondary">
-                                    <div class="card-header">
-                                      <h3 class="card-title">1st Year : 1st Sem</h3>
-                                    </div>
-                                    <!-- /.card-header -->
-                                    <div class="card-body">
-                                        <table id="subjectsTable" class="table table-bordered table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Code</th>
-                                                    <th>Description</th>
-                                                    <th>Units</th>
-                                                    <th>Grade</th>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-                                                @php
-                                                $counter = 0;
-                                                @endphp
-                                                @foreach ($subjects as $subject)
-                                                @php
-                                                $myGrade = '';
-                                                $counter++;
-                                                $totalUnits = (int)$subject->lec_units + (int)$subject->lab_units;
-                                                @endphp
-                                                @foreach ($grades as $grade)
-                                                    @if ($grade->subject_id == $subject->id)
-                                                        @php
-                                                        $myGrade = $grade->grade;
-                                                        @endphp
+                                @php
+                                    $SY = "";
+                                    $SEM = "";
+                                    $counter = 0;
+                                @endphp
+                            
+                                <div class="row">
+                                    @foreach ($grades->sortByDesc('id') as $grade)
+                                        @php 
+                                            $counter++; 
+                                            $currentSY = $grade->school_year;
+                                            $currentSEM = $grade->semester;
+                                        @endphp
+                            
+                                        {{-- Check if the school year or semester has changed --}}
+                                        @if ($currentSY != $SY || $currentSEM != $SEM)
+                                            {{-- Close previous col-lg-6 if not the first iteration --}}
+                                            @if ($counter > 1)
+                                                </tbody>
+                                                </table>
+                                                </div> {{-- Close gradeWrapper --}}
+                                                </div> {{-- Close col-lg-6 --}}
+                                            @endif
+                            
+                                            {{-- Start a new column for new School Year and Semester --}}
+                                            <div class="col-lg-6">
+                                                <div class="gradeWrapper">
+                                                    @if ($currentSEM == 1)
+                                                        @php $sem = "1st Semester" @endphp
+                                                    @else
+                                                        @php $sem = "2nd Semester" @endphp
                                                     @endif
-                                                @endforeach
-                                                    <tr>
-                                                        <td>{{$counter}}</td>
-                                                        <td>{{ $subject->subject_code }}</td>
-                                                        <td>{{ $subject->description }}</td>
-                                                        <td>Lec: {{$subject->lec_units}} Lab: {{$subject->lab_units}}<br>Total: {{$totalUnits}}</td>
-                                                        <td>
-                                                            {{ $myGrade }}
-                                                        </td>
-                                                    </tr> 
-                                                @endforeach
-                                            </tbody>
-
-                                            <tfoot>
+                                                    <h5>SY {{ $currentSY }} ({{ $sem }})</h5>
+                                                    <table class="table table-bordered">
+                                                        <thead class="table-secondary">
+                                                            <tr>
+                                                                <th>Code</th>
+                                                                <th>Description</th>
+                                                                <th>Grade</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                        @endif
+                            
+                                        {{-- Store the current school year and semester for the next iteration --}}
+                                        @php
+                                            $SY = $currentSY;
+                                            $SEM = $currentSEM;
+                                        @endphp
+                            
+                                        {{-- Display subject details --}}
+                                        @foreach ($subjects as $subject)
+                                            @if ($grade->subject_id == $subject->id)
                                                 <tr>
-                                                    <th>#</th>
-                                                    <th>Code</th>
-                                                    <th>Description</th>
-                                                    <th>Units</th>
-                                                    <th>Grade</th>
+                                                    <td>{{ $subject->subject_code }}</td>
+                                                    <td>{{ $subject->description }}</td>
+                                                    <td>{{ $grade->grade }}</td>
                                                 </tr>
-                                                </tr>
-                                            </tfoot>
-          
-                                    </div>
-                                </div>
+                                            @endif
+                                        @endforeach
+                            
+                                    @endforeach
+                            
+                                    {{-- Close last col-lg-6 and table properly --}}
+                                    @if ($counter > 0)
+                                            </tbody>
+                                        </table>
+                                    </div> {{-- Close gradeWrapper --}}
+                                </div> {{-- Close col-lg-6 --}}
+                                    @endif
+                                </div> {{-- Close row --}}
+                              
                             </div>
    
         

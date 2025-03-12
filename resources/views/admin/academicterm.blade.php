@@ -80,8 +80,28 @@
   
     @section('page-content')
       <div class="row">
+        <div class="col-lg-6">
+          <div class="curr_academic_term">
+            <div class="row">
+              <div class="col-lg-6">
+                <h4>Current S.Y. <span class="text-bold">{{ $academicTerm->school_year }}</span></h4>
+              </div>
+              <div class="col-lg-6">
+                @if ($academicTerm->semester == '1')
+                  <h4>Semester: <span class="text-bold">1st</span></h4>
+                @else
+                  <h4>Semester: <span class="text-bold">2nd</span></h4>
+                @endif
+                
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+      <div class="row">
 
-        <div class="col-6">
+        <div class="col-lg-6">
             <div class="card card-secondary">
                 <div class="card-header">
                   <h3 class="card-title">Set Academic Year</h3>
@@ -93,9 +113,37 @@
                         <div class="row">
                             <div class="col-sm-6">
                             <!-- select -->
-                                <div class="form-group">
+                                {{-- <div class="form-group">
                                     <label>School Year</label>
                                     <input type="text" value="{{ $academicTerm->school_year }}" name="schoolyear" placeholder="School Year" id="schoolyear" class="form-control" required>
+                                </div> --}}
+
+                                @php
+                                  $year = date("Y");
+                                  $prev_year = $year - 1;
+                                @endphp
+
+                                <div class="form-group">
+                                  <label>School Year</label>
+                                  <div class="row">
+                                    <div class="col-6">
+                                      <select name="schoolyear" id="schoolyear" class="form-control">
+                                        <option selected disabled value="">Select School Year</option>
+                                        <option value="{{ $prev_year }}">{{ $prev_year }}</option>
+                                        <option value="{{ $year }}">{{ $year }}</option>
+                                    
+                                      </select>
+                                    </div>
+
+                                    <div class="col-1">
+                                      <span class="sep d-flex justify-content-center align-items-center h-100">-</span>
+                                    </div>
+
+                                    <div class="col-5">
+                                      <input type="text" disabled readonly name="nxtschoolyear" placeholder="School Year" id="nxtschoolyear" class="form-control">
+                                    </div>
+                                  </div>
+                              
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -124,7 +172,7 @@
             </div>
         </div>
 
-        <div class="col-6 settingsContent">
+        <div class="col-lg-6 settingsContent">
           <div class="card card-secondary">
               <div class="card-header">
                 <h3 class="card-title">Settings</h3>
@@ -166,6 +214,12 @@
         timer: 3000
       });
 
+      $("#schoolyear").change(function(){
+        var curr_sy = $(this).val();
+        var nxt_sy = parseInt(curr_sy) + 1;
+        $('#nxtschoolyear').val(nxt_sy.toString());
+      }); 
+
 
       $(function () {
           $.validator.setDefaults({
@@ -198,6 +252,8 @@
                               icon: 'success',
                               title: response.message,
                           })
+
+                          $(".curr_academic_term").load(location.href + " .curr_academic_term");
                           $('.setAY').prop('disabled', false);
                       }
 
@@ -206,17 +262,11 @@
           });
           $('#setacademictermform').validate({
               rules: {
-                  schoolyear: {
-                      required: true,
-                  },
                   semester: {
                       required: true,
                   },
               },
               messages: {
-                schoolyear: {
-                      required: "Please provide a valid school year",
-                  },
                   semester: {
                       required: "Please select a semester",
                   },

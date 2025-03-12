@@ -17,7 +17,6 @@ class AcademicTermController extends Controller
 
     public function set(Request $request){
         $validator = Validator::make($request->all(), [
-            'schoolyear'=>'required',
             'semester'=>'required',
         ]);
 
@@ -29,8 +28,12 @@ class AcademicTermController extends Controller
         }else{
             $academicTerm = AcademicTerm::where('id', 1)->first();
             if($academicTerm){
-                $academicTerm->school_year = htmlspecialchars($request->input('schoolyear'));
+                if($request->input('schoolyear') != ""){
+                    $schoolyear = $request->input('schoolyear') . "-" . strval((int)$request->input('schoolyear') + 1);
+                    $academicTerm->school_year = $schoolyear;
+                }      
                 $academicTerm->semester = htmlspecialchars($request->input('semester'));
+                $academicTerm->grade_status = "Deactivated";
 
                 $users = User::all();
 

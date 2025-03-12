@@ -373,8 +373,8 @@
                                                                                 {{-- Buttons --}}
                                                                             </div>
                                                                         </div>
-                                                                        <div class="text-center text-sm-right">
-                                                                            <span>Status: </span><span class="badge badge-success">Enlisted</span>
+                                                                        <div class="text-center text-sm-right enlistStat">
+                                                                            
                                                                         </div>
                                                                     </div>
                         
@@ -465,38 +465,12 @@
                                                                     
                                                                     </div>
         
-                                                                    <div class="p-3 tab-pane fade share-tab" id="grades" role="tabpanel" aria-labelledby="grades-tab">
+                                                                    <div class="p-3 tab-pane fade grades-tab" id="grades" role="tabpanel" aria-labelledby="grades-tab">
                                                                         <div class="row">
                                                                             <div class="col">
                                                                                 <div class="mt-2">
-                                                                                    <div class="row">
-                                                                                        <div class="col-lg-6">
-                                                                                            <div class="gradeWrapper">
-                                                                                                <h4>SY 2024-2025 (First Semester)</h4>
-                                                                                                <table class="table table-bordered">
-                                                                                                    <thead class="table-secondary">
-                                                                                                        <tr>
-                                                                                                            <th>Subject Code</th>
-                                                                                                            <th>Description</th>
-                                                                                                            <th>Grade</th>
-                                                                                                        </tr>
-                                                                                                    </thead>
-                                                                                                    <tbody>
-                                                                                                        <tr>
-                                                                                                            <td>MIT 204</td>
-                                                                                                            <td>TECHNOLOGY AND PROJECT MANAGEMENT</td>
-                                                                                                            <td></td>
-                                                                                                        </tr>
-                                                                                                        <tr>
-                                                                                                            <td>MIT 201</td>
-                                                                                                            <td>ADVANCED OPERATING SYSTEMS AND NETWORKING</td>
-                                                                                                            <td></td>
-                                                                                                        </tr>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
+                                                                                    <div class="row grade-container"></div>
+                                                                     
                                                                                     
                                                                                     
                                                                                 </div>                                                                 
@@ -1449,6 +1423,7 @@
             url: "/students/edit-student/"+studentID,
             success: function (response){
                 if(response.status == 200){
+                    
 
                     $('#student_id_edit_view').val(response.student.student_id);
                     $('#name_edit_view').val(response.student.name);
@@ -1497,6 +1472,83 @@
                     $('#selectedStudentName').html(response.student.name);
                     $('#selectedStudentCourse').html(courseVal);
                     $('#selectedStudentYearLevel').html(yearLvl);
+
+                    // <span>Status: </span><span class="badge badge-success enlistStat">Enlisted</span>
+                    $('.enlistStat').html("");
+                    if(response.student.current_subjects != "" && response.student.current_subjects_status == 3){
+                        $('.enlistStat').append('<span>Status: </span><span class="badge badge-success">Enlisted</span>');
+                    }else{
+                        $('.enlistStat').append('<span>Status: </span><span class="badge badge-warning">???</span>');
+                    }
+
+
+                    let groupedGrades = {};
+
+                    // Group subjects by school year and semester
+                    $.each(response.grades, function(key, grade){
+                        let sySem = grade.school_year + '-' + grade.semester;
+
+                        if (!groupedGrades[sySem]) {
+                            groupedGrades[sySem] = {
+                                school_year: grade.school_year,
+                                semester: grade.semester,
+                                subjects: []
+                            };
+                        }
+
+                        // Find subject details
+                        var subjectCode = '';
+                        var subjectDesc = '';
+                        $.each(response.subjects, function(k, subject){
+                            if(grade.subject_id == subject.id){
+                                subjectCode = subject.subject_code;
+                                subjectDesc = subject.description;
+                            }
+                        });
+
+                        // Add subject to the group
+                        groupedGrades[sySem].subjects.push({
+                            subject_code: subjectCode,
+                            description: subjectDesc,
+                            grade: grade.grade
+                        });
+                    });
+
+                    // Now render grouped data
+                    let htmlContent = "";
+                    $.each(groupedGrades, function(key, group){
+                        var semText = group.semester == 1 ? '1st Semester' : '2nd Semester';
+                        htmlContent += `
+                            <div class="col-lg-6">
+                                <div class="gradeWrapper">
+                                    <h5>SY ${group.school_year} (${semText})</h5>
+                                    <table class="table table-bordered">
+                                        <thead class="table-secondary">
+                                            <tr>
+                                                <th>Code</th>
+                                                <th>Description</th>
+                                                <th>Grade</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                        `;
+
+                        $.each(group.subjects, function(index, subject){
+                            htmlContent += `
+                                <tr>
+                                    <td>${subject.subject_code}</td>
+                                    <td>${subject.description}</td>
+                                    <td>${subject.grade}</td>
+                                </tr>
+                            `;
+                        });
+
+                        htmlContent += `</tbody></table></div></div>`;
+                    });
+
+                    // Append generated HTML to container
+                    $(".grade-container").html(htmlContent);
+
 
                     
 

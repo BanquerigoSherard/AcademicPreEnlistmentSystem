@@ -107,7 +107,19 @@
 
                 @if (Auth::user()->current_subjects_status == 0)
                 <div class="row mb-2">
-                    <div class="col-12">
+                    <div class="col-12 d-flex justify-content-end">
+                            {{-- <div class="input-group me-2" style="width: 252px;">
+                                <label class="input-group-text" for="inputGroupSelect01">Year Level</label>
+                                <select class="form-select" id="inputGroupSelect01">
+                                    <option selected>Select Year Level</option>
+                                    <option value="1">1st</option>
+                                    <option value="2">2nd</option>
+                                    <option value="3">2rd</option>
+                                    <option value="3">4th</option>
+                                </select>
+                            </div> --}}
+                          
+
                             <button type="button" id="addSubjBtn" data-toggle="modal" class="btn btn-sm btn-primary float-right">
                                 <i class="nav-icon fas fa-solid fa-plus"></i>
                                 <span>Add Subject</span>
@@ -138,7 +150,7 @@
                             </div>
                             <!-- /.card-header -->
                             @if (Auth::user()->current_subjects_status == 2 && $academicTerm->grade_status == "Activated")
-                                <form id="addGradesForm" method="POST">
+                                <form id="addGradesForm" method="POST" class="needs-validation" novalidate>
                             @else
                                 <form id="addSubjectsForm" method="POST">
                             @endif
@@ -164,7 +176,7 @@
 
                                         @if (Auth::user()->current_subjects_status == 3)
                                             <tr class="text-center">
-                                                <td colspan="10">Your subject grades have been locked and moved to the subjects taken tab.</td>
+                                                <td colspan="10">Your subject grades have been locked and moved to the GRADES tab.</td>
                                             </tr>
                                         @else
                                             @foreach ($subjects as $subject)
@@ -224,7 +236,21 @@
                                                                 @endforeach
                                                                 <input type="hidden" name="subjectIDs[]" value="{{ $subject->id }}">
                                                                 <div class="form-floating" style="width: 100px">
-                                                                    <input type="number" value="{{ $myGrade }}" min="1" max="5" class="form-control grade" name="grades[]" placeholder="Grade" pattern="1\.0\1\.25\1\.75\2\.0">
+                                                                    <input type="text" list="grade-values" value="{{ $myGrade }}" class="form-control grade" name="grades[]" placeholder="Grade">
+                                                                    <datalist id="grade-values">
+                                                                        <option value="1.00">
+                                                                        <option value="1.25">
+                                                                        <option value="1.75">
+                                                                        <option value="2.00">
+                                                                        <option value="2.25">
+                                                                        <option value="2.75">
+                                                                        <option value="3.00">
+                                                                        <option value="5.00">
+                                                                        <option value="DRP">
+                                                                        <option value="UW">
+                                                                        <option value="AW">
+                                                                        <option value="INC">
+                                                                    </datalist>
                                                                     <label class="text-secondary">Grade</label>
                                                                 </div>
                                                             </td>
@@ -235,15 +261,17 @@
                                                         $bgColor = '';
                                                         $pre_requisites = explode(',', $subject->pre_requisites);
                                                         $failedSubj = [];
+                                                        $subjGrade = '';
                                                     @endphp
                                                     @foreach ($allSubjects as $allSubject)
                                                         @if (in_array($allSubject->subject_code, $pre_requisites))
                                                             @foreach ($grades as $grade)
                                                                 @if ($allSubject->id == $grade->subject_id && $grade->student_id == Auth::user()->id && $grade->status == 1)
-                                                                    @if ((int)$grade->grade > 3.0)
+                                                                    @if ((int)$grade->grade > 3.0 || $grade->grade == "INC" || $grade->grade == "DRP" || $grade->grade == "AW" || $grade->grade == "UW")
                                                                         @php
                                                                         $bgColor = 'table-danger';
-                                                                        array_push($failedSubj, $allSubject->subject_code)
+                                                                        array_push($failedSubj, $allSubject->subject_code);
+                                                                        $subjGrade = $grade->grade;
                                                                         @endphp
                                                                     @endif
                                                                 @endif
@@ -263,7 +291,16 @@
                                                         <td>Lec: {{$subject->lec_units}} Lab: {{$subject->lab_units}}<br>Total: {{$totalUnits}}</td>
                                                         <td>
                                                             @if ($bgColor != '')
-                                                                You failed <span class="badge text-bg-warning">{{$failedSubjStr}}</span>
+                                                            @if ($subjGrade == "DRP")
+                                                                You dropped <span class="badge text-bg-warning">{{$failedSubjStr}}</span>
+                                                            @elseif($subjGrade == "INC")
+                                                                You are INC in <span class="badge text-bg-warning">{{$failedSubjStr}}</span>
+                                                            @elseif($subjGrade == "AW" || $subjGrade == "UW")
+                                                                You withdrew from the subject <span class="badge text-bg-warning">{{$failedSubjStr}} (Grade:{{$subjGrade}})</span>
+                                                            @else
+                                                                You failed <span class="badge text-bg-warning">{{$failedSubjStr}} (Grade:{{$subjGrade}})</span>
+                                                            @endif
+                                                                
                                                             @else
                                                                 <div class="custom-control custom-checkbox">
                                                                     <label class="checkbox">
@@ -378,53 +415,91 @@
     $(document).on('click', '.saveGrades', function (e) {
         e.preventDefault();
 
-        $('.saveGrades').text('');
+        let isValid = true;
+        let allowedValues = ["1", "1.0", "1.00", "1.25", "1.75", "2", "2.0", "2.00", "2.25", "2.75", "3", "3.0",  "3.00", "5", "5.0",  "5.00", "DRP", "UW", "AW", "INC"];
 
-        $('.saveGrades').prop('disabled', true);
+        $(".grade").each(function () {
+            if($(this).val() != ""){
+                let inputValue = $(this).val().trim();
 
-        $('.saveGrades').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
-
-        let formdata = new FormData($('#addGradesForm')[0]);
-
-        var stud_id = $('.saveGrades').val();
-
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        $.ajax({
-            type: "POST",
-            url: "/student/save-grades",
-            data: formdata,
-            dataType: "json",
-            contentType: false,
-            processData: false,
-            success: function (response){
-                $('.saveGrades').text('Save Grades');
-
-                if(response.status == 200){
-                    Toast.fire({
-                        icon: 'success',
-                        title: response.message,
-                    })
-                }else{
-                    Toast.fire({
-                        icon: 'error',
-                        title: response.message,
-                    })
-
-                    
+                if(inputValue == 1){
+                    $(this).val("1.00");
+                }else if(inputValue == 2){
+                    $(this).val("2.00");
+                }else if(inputValue == 3){
+                    $(this).val("3.00");
+                }else if(inputValue == 5){
+                    $(this).val("5.00");
                 }
-            
-
-                $(".pageContent").load(location.href + " .pageContent");
-                
-                $('.saveGrades').prop('disabled', false);
+                if (!allowedValues.includes(inputValue)) {
+                    if ($(this).closest('.form-floating').find(".invalid-feedback").length > 0) {
+                        $(this).closest('.form-floating').find(".invalid-feedback").last().remove();
+                    }
+                    $(this).closest('.form-floating').append("<div class='invalid-feedback d-block'>Please enter a valid grade.</div>");
+                    isValid = false;
+                }else{
+                    $(this).closest('.form-floating').find(".invalid-feedback").last().remove();
+                }
             }
-
+            
         });
+
+        if(!isValid){
+            Toast.fire({
+                icon: 'warning',
+                title: "Please enter a valid grade",
+            })
+        }
+
+        if (isValid) {
+            $('.saveGrades').text('');
+
+            $('.saveGrades').prop('disabled', true);
+
+            $('.saveGrades').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+            let formdata = new FormData($('#addGradesForm')[0]);
+
+            var stud_id = $('.saveGrades').val();
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "/student/save-grades",
+                data: formdata,
+                dataType: "json",
+                contentType: false,
+                processData: false,
+                success: function (response){
+                    $('.saveGrades').text('Save Grades');
+
+                    if(response.status == 200){
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message,
+                        })
+                    }else{
+                        Toast.fire({
+                            icon: 'error',
+                            title: response.message,
+                        })
+
+                        
+                    }
+                
+
+                    $(".pageContent").load(location.href + " .pageContent");
+                    
+                    $('.saveGrades').prop('disabled', false);
+                }
+
+            });
+        }
     });
 
     // Lock Grades
