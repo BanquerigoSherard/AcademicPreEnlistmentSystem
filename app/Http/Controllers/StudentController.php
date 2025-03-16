@@ -6,6 +6,7 @@ use App\Models\AcademicTerm;
 use App\Models\Subject;
 use App\Models\Grade;
 use App\Models\Course;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -142,5 +143,27 @@ class StudentController extends Controller
         ]);
 
 
+    }
+
+    // personalitytest
+    public function personalitytest(){
+        return view('student.personality-test-results');
+    }
+
+    public function submitscore(Request $request){
+        $userID = Auth::user()->id;
+
+        $selectedUser = User::find($userID);
+
+        $scores = (string)$request->input('openness') . ',' . (string)$request->input('conscientiousness') . ',' . (string)$request->input('extraversion') . ',' . (string)$request->input('agreeableness') . ',' . (string)$request->input('neuroticism');
+
+        if($selectedUser){
+            $selectedUser->personality_trait_score = $scores;
+            $selectedUser->update();
+            return response()->json([
+                'status'=>200,
+                'message'=>'Scores Submitted Successfully',
+            ]);
+        }
     }
 }

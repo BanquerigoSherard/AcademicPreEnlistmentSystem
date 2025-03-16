@@ -43,6 +43,9 @@ Route::group(['middleware' => ['auth', 'verified', 'role:student']] ,function ()
     Route::post('/student/save-grades', [StudentController::class, 'savegrades'])->name('student.savegrades');
     Route::get('/student/lock-grades', [StudentController::class, 'lockgrades'])->name('student.lockgrades');
 
+    Route::get('/personality-test-results', [StudentController::class, 'personalitytest'])->name('personality-test-results');
+    Route::post('/student/submit-test-score', [StudentController::class, 'submitscore'])->name('student.submitscore');
+
 });
 
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');

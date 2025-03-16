@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('course_id')->nullable();
             $table->string('year_level')->nullable();
             $table->string('current_subjects')->nullable();
-            $table->integer('current_subjects')->default(0);
+            $table->integer('current_subjects_status')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });
