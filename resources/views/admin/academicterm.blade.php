@@ -79,6 +79,94 @@
     @endsection
   
     @section('page-content')
+    {{-- Modals --}}
+    {{-- Set Academic Term Confirmation --}}
+    <div class="modal fade" id="set-AY-confirm">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">Set Academic Term</h4>
+                  <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              
+              <div class="modal-body text-center">
+                  <h2>Are you sure?</h2>
+                  <p>You are about to set the academic term.</p>
+                  <p class="">This will affect all students enrolled in the current term. Make sure that all students submitted their grades.</p>
+
+              </div>
+
+              <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="confirmSetAY btn btn-success">Save</button>
+              </div>
+
+          </div>
+          <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    {{-- Activate Grade Confirmation --}}
+    <div class="modal fade" id="activate-grade-modal">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">Activate Grade</h4>
+                  <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              
+              <div class="modal-body text-center">
+                  <h2>Are you sure?</h2>
+                  <p>You are about to activate the grade input.</p>
+              </div>
+
+              <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" id="activateGradeConfirm" class="activateGradeConfirm btn btn-success">Activate</button>
+              </div>
+
+          </div>
+          <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    {{-- Deactivate Grade Confirmation --}}
+    <div class="modal fade" id="deactivate-grade-modal">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">Deactivate Grade</h4>
+                  <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              
+              <div class="modal-body text-center">
+                  <h2>Are you sure?</h2>
+                  <p>You are about to deactivate the grade input.</p>
+                  <p>Make sure all student inputted their grades.</p>
+              </div>
+
+              <div class="modal-footer justify-content-between">
+                  <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" id="deactivateGradeConfirm" class="deactivateGradeConfirm btn btn-success">Deactivate</button>
+              </div>
+
+          </div>
+          <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+    {{-- End Modals --}}
       <div class="row">
         <div class="col-lg-6">
           <div class="curr_academic_term">
@@ -89,8 +177,10 @@
               <div class="col-lg-6">
                 @if ($academicTerm->semester == '1')
                   <h4>Semester: <span class="text-bold">1st</span></h4>
-                @else
+                @elseif ($academicTerm->semester == '2')
                   <h4>Semester: <span class="text-bold">2nd</span></h4>
+                @else
+                  <h4>Semester: <span class="text-bold">Summer</span></h4>
                 @endif
                 
               </div>
@@ -121,6 +211,8 @@
                                 @php
                                   $year = date("Y");
                                   $prev_year = $year - 1;
+                                  $nextYr = $year + 1;
+                                  $lastYr = $year + 2;
                                 @endphp
 
                                 <div class="form-group">
@@ -131,6 +223,8 @@
                                         <option selected disabled value="">Select School Year</option>
                                         <option value="{{ $prev_year }}">{{ $prev_year }}</option>
                                         <option value="{{ $year }}">{{ $year }}</option>
+                                        <option value="{{ $nextYr }}">{{ $nextYr }}</option>
+                                        <option value="{{ $lastYr }}">{{ $lastYr }}</option>
                                     
                                       </select>
                                     </div>
@@ -153,9 +247,15 @@
                                       @if ($academicTerm->semester == '1')
                                         <option selected value="1">1st Semester</option>
                                         <option value="2">2nd Semester</option>
-                                      @else
+                                        <option value="3">Summer</option>
+                                      @elseif ($academicTerm->semester == '2')
                                         <option value="1">1st Semester</option>
                                         <option selected value="2">2nd Semester</option>
+                                        <option value="3">Summer</option>
+                                      @else
+                                        <option value="1">1st Semester</option>
+                                        <option value="2">2nd Semester</option>
+                                        <option selected value="3">Summer</option>
                                       @endif
                                     
                                     </select>
@@ -164,7 +264,7 @@
                         </div>
 
                         <div class="form-group float-right">
-                            <button type="submit" class="btn btn-success setAY">Save</button>
+                            <button type="submit" class="btn btn-success saveAyConfirm">Save</button>
                         </div>
 
                     </form>
@@ -172,8 +272,10 @@
             </div>
         </div>
 
-        <div class="col-lg-6 settingsContent">
-          <div class="card card-secondary">
+        
+        <div class="col-lg-6">
+          <div class="settingsContent">
+            <div class="card card-secondary">
               <div class="card-header">
                 <h3 class="card-title">Settings</h3>
               </div>
@@ -194,7 +296,9 @@
                 </div>
               </div>
           </div>
-      </div>
+          </div>
+          
+        </div>
         
   
   
@@ -220,72 +324,83 @@
         $('#nxtschoolyear').val(nxt_sy.toString());
       }); 
 
-
       $(function () {
-          $.validator.setDefaults({
-              submitHandler: function () {
-                  $('.setAY').text('');
+        $.validator.setDefaults({
+            submitHandler: function (form) {
+                $('#set-AY-confirm').modal('show');
 
-                  $('.setAY').prop('disabled', true);
+                $('.confirmSetAY').off('click').on('click', function () {
+                    $('.confirmSetAY').text('').prop('disabled', true)
+                        .append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
 
-                  $('.setAY').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+                    let formdata = new FormData($('#setacademictermform')[0]);
 
-                  let formdata = new FormData($('#setacademictermform')[0]);
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
 
-                  $.ajaxSetup({
-                      headers: {
-                          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                      }
-                  });
+                    $.ajax({
+                        type: "POST",
+                        url: "/academicyear/set-academicterm",
+                        data: formdata,
+                        dataType: "json",
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            $('.confirmSetAY').text('Save').prop('disabled', false);
 
-                  $.ajax({
-                      type: "POST",
-                      url: "/academicyear/set-academicterm",
-                      data: formdata,
-                      dataType: "json",
-                      contentType: false,
-                      processData: false,
-                      success: function (response){
-                          $('.setAY').text('Save');
+                            Toast.fire({
+                                icon: 'success',
+                                title: response.message,
+                            });
 
-                          Toast.fire({
-                              icon: 'success',
-                              title: response.message,
-                          })
+                            $(".curr_academic_term").load(location.href + " .curr_academic_term");
+                            $('#set-AY-confirm').modal('hide');
+                        },
+                        error: function (xhr) {
+                            $('.confirmSetAY').text('Save').prop('disabled', false);
+                            alert("An error occurred. Please try again.");
+                        }
+                    });
+                });
+            }
+        });
 
-                          $(".curr_academic_term").load(location.href + " .curr_academic_term");
-                          $('.setAY').prop('disabled', false);
-                      }
-
-                  });
-              }
-          });
-          $('#setacademictermform').validate({
-              rules: {
-                  semester: {
-                      required: true,
-                  },
-              },
-              messages: {
-                  semester: {
-                      required: "Please select a semester",
-                  },
-              },
-              errorElement: 'span',
-              errorPlacement: function (error, element) {
-                  error.addClass('invalid-feedback');
-                  element.closest('.form-group').append(error);
-              },
-              highlight: function (element, errorClass, validClass) {
-                  $(element).addClass('is-invalid');
-              },
-              unhighlight: function (element, errorClass, validClass) {
-                  $(element).removeClass('is-invalid');
-              }
-          });
+        $('#setacademictermform').validate({
+            rules: {
+                semester: {
+                    required: true,
+                },
+            },
+            messages: {
+                semester: {
+                    required: "Please select a semester",
+                },
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-group').append(error);
+            },
+            highlight: function (element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element) {
+                $(element).removeClass('is-invalid');
+            }
+        });
       });
 
+
       $(document).on('click', '#activateGrade', function (e) {
+        e.preventDefault();
+        $('#activate-grade-modal').modal('show');
+      });
+    
+      $(document).on('click', '#activateGradeConfirm', function (e) {
+        $('#activateGradeConfirm').text('').prop('disabled', true).append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Activating...');
           $.ajax({
               type: "GET",
               url: "/academicterm/activate-grade",
@@ -298,12 +413,20 @@
                   })
 
                   $(".settingsContent").load(location.href + " .settingsContent");
+                  $('#activateGradeConfirm').text('Activate').prop('disabled', false);
+                  $('#activate-grade-modal').modal('hide');
               }
 
           });
       });
 
       $(document).on('click', '#deactivateGrade', function (e) {
+        e.preventDefault();
+        $('#deactivate-grade-modal').modal('show');
+      });
+
+      $(document).on('click', '#deactivateGradeConfirm', function (e) {
+        $('#deactivateGradeConfirm').text('').prop('disabled', true).append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deactivating...');
           $.ajax({
               type: "GET",
               url: "/academicterm/deactivate-grade",
@@ -316,6 +439,8 @@
                   })
 
                   $(".settingsContent").load(location.href + " .settingsContent");
+                  $('#deactivateGradeConfirm').text('Deactivate').prop('disabled', false);
+                  $('#deactivate-grade-modal').modal('hide');
               }
 
           });

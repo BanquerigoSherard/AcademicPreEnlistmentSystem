@@ -9,14 +9,14 @@ use App\Models\Course;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+ 
 class StudentController extends Controller
 {
     public function index(){
         $yearLvl = Auth::user()->year_level; 
         $academicTerm = AcademicTerm::find(1);
         $allSubjects = Subject::all();
-        $subjects = Subject::where([ ['year_lvl', '=', $yearLvl], ['semester', '=', $academicTerm->semester] ])->get();
+        $subjects = Subject::where([ ['year_lvl', '=', $yearLvl], ['semester', '=', $academicTerm->semester], ['prospectus_id', '=', Auth::user()->prospectus_id] ])->get();
         // $subjects = Subject::where([['semester', '=', $academicTerm->semester] ])->get();
         $grades = Grade::where([ ['student_id', '=', Auth::user()->id] ])->get();
         $course = Course::find(Auth::user()->course_id);
@@ -58,7 +58,12 @@ class StudentController extends Controller
     }
 
     public function addsubject(Request $request){
-        $user = Auth::user();
+        if($request->has('studentID')){
+            $user = User::find($request->input('studentID'));
+        }else{
+            $user = Auth::user();
+        }
+        
         $subj_ids = explode(',', $user->current_subjects);
         if($subj_ids[0] == ''){
             $subj_ids = [];
@@ -123,24 +128,35 @@ class StudentController extends Controller
 
     public function lockgrades(){
         $user = Auth::user();
+
         $grades = Grade::where([
             ['student_id', '=', $user->id],
             ['status', '=', '0'],
         ])->get();
 
-        foreach ($grades as $grade) {
-            $updateGrade = Grade::find($grade->id);
-            $updateGrade->status = "1";
-            $updateGrade->update();
+        if ($grades->isEmpty()) {
+            return response()->json([
+                'status' => 400,
+                'message' => 'No grades found to lock.',
+            ]);
+        }else{
+            Grade::where([
+                ['student_id', '=', $user->id],
+                ['status', '=', '0'],
+            ])->update(['status' => '1']);
+            
+            $user->current_subjects = '';
+            $user->current_subjects_status = 3;
+            $user->save();
+    
+            return response()->json([
+                'status' => 200,
+                'message' => 'Grades locked successfully',
+            ]);
         }
 
-        $user->current_subjects = '';
-        $user->current_subjects_status = 3;
-        $user->save();
-        return response()->json([
-            'status'=>200,
-            'message'=>'Grades locked successfully',
-        ]);
+
+
 
 
     }
@@ -165,5 +181,19 @@ class StudentController extends Controller
                 'message'=>'Scores Submitted Successfully',
             ]);
         }
+    }
+
+    public function getTestResults($id){
+        $user = User::find($id);
+        $testResults = $user->personality_trait_score;
+        $testResults_arr = explode(",", $testResults); 
+        $testResults_arr = array_map('intval', $testResults_arr); 
+
+        return response()->json([
+            'status'=>200,
+            'testResults'=>$testResults_arr,
+            'message'=>'Student Score fetch successfull',
+        ]);
+
     }
 }

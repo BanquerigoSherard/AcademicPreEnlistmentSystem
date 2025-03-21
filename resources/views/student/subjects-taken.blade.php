@@ -43,8 +43,10 @@
                                                 <div class="gradeWrapper">
                                                     @if ($currentSEM == 1)
                                                         @php $sem = "1st Semester" @endphp
+                                                    @elseif ($currentSEM == 2)
+                                                    @php $sem = "2nd Semester" @endphp
                                                     @else
-                                                        @php $sem = "2nd Semester" @endphp
+                                                        @php $sem = "Summer" @endphp
                                                     @endif
                                                     <h5>SY {{ $currentSY }} ({{ $sem }})</h5>
                                                     <table class="table table-bordered">

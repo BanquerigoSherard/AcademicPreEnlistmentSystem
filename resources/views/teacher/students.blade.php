@@ -109,6 +109,27 @@
                             </div>
 
                             <div class="row mb-2">
+                                <div class="col-9"> 
+                                    <div class="prospectusSelect">
+                                        <div class="form-floating prospectusSelectInner">
+                                            <select name="prospectus" required class="form-select" id="selectProspectusVersion" aria-label="Floating label select example">
+                                              <option value="" selected>Select Version</option>
+                                              @foreach ($prospectus as $pros)
+                                                <option value="{{ $pros->id }}">{{ $pros->version }}</option>
+                                              @endforeach
+                                            </select>
+                                            <label for="selectProspectusVersion">Select Prospectus Version*</label>
+                                        </div>
+                                    </div>
+                            
+                                </div>
+    
+                                <div class="col-3">
+                                    <button title="Add New Version" class="btn btn-primary h-100 w-100 addNewPros">Add New</button>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
                                 <div class="col-9">
                                     <div class="form-floating coursesSelectAdd">
                                         <select name="course" required class="form-select" id="selectCourse" aria-label="Floating label select example">
@@ -179,6 +200,26 @@
                             <div class="form-floating mb-3">
                                 <input type="email" name="email" required class="form-control" id="email_edit" placeholder="Email">
                                 <label for="email_edit">Email</label>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-9"> 
+                                    <div class="form-floating">
+                                        <select name="prospectus" required class="form-select" id="selectProspectusVersionEdit" aria-label="Floating label select example">
+                                          <option value="" selected>Select Version</option>
+                                          @foreach ($prospectus as $pros)
+                                            <option value="{{ $pros->id }}">{{ $pros->version }}</option>
+                                          @endforeach
+                                        </select>
+                                        <label for="selectProspectusVersionEdit">Select Prospectus Version</label>
+                                    </div>
+
+                                    
+                                </div>
+    
+                                <div class="col-3">
+                                    <button title="Add New Version" class="btn btn-primary h-100 w-100">Add New</button>
+                                </div>
                             </div>
 
                             <div class="row mb-2">
@@ -273,6 +314,27 @@
                                     <a href="{{url('excel/StudentImport.xlsx')}}" class="text-primary" download>Download Template</a>
                                     <i class="right fas fa-download"></i>
                                 </span>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-9"> 
+                                    <div class="prospectusSelect">
+                                        <div class="form-floating prospectusSelectInnerImport import-inputs">
+                                            <select name="prospectus" required class="form-select" id="prospectusSelectInnerImport" aria-label="Floating label select example">
+                                              <option value="" selected>Select Version</option>
+                                              @foreach ($prospectus as $pros)
+                                                <option value="{{ $pros->id }}">{{ $pros->version }}</option>
+                                              @endforeach
+                                            </select>
+                                            <label for="prospectusSelectInnerImport">Select Prospectus Version*</label>
+                                        </div>
+                                    </div>
+                            
+                                </div>
+    
+                                <div class="col-3">
+                                    <button title="Add New Version" class="btn btn-primary h-100 w-100 addNewPros">Add New</button>
+                                </div>
                             </div>
 
                             <div class="row mb-2">
@@ -384,10 +446,13 @@
         
                                                                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                                                                     <li class="nav-item" role="presentation">
-                                                                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">Details</button>
+                                                                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">Details</button>
                                                                     </li>
-                                                                    <li class="nav-item share-item" role="presentation">
-                                                                    <button class="nav-link" id="share-tab-id" data-bs-toggle="tab" data-bs-target="#grades" type="button" role="tab" aria-controls="grades" aria-selected="false">Grades</button>
+                                                                    <li class="nav-item grades-item" role="presentation">
+                                                                        <button class="nav-link" id="grades-tab-id" data-bs-toggle="tab" data-bs-target="#grades" type="button" role="tab" aria-controls="grades" aria-selected="false">Grades</button>
+                                                                    </li>
+                                                                    <li class="nav-item personality-trait-item" role="presentation">
+                                                                        <button class="nav-link" id="personality-trait-tab-id" data-bs-toggle="tab" data-bs-target="#personality-trait" type="button" role="tab" aria-controls="personality-trait" aria-selected="false">Personality Trait Score</button>
                                                                     </li>
                                                                 </ul>
                                                                 <div class="tab-content" id="myTabContent">
@@ -477,6 +542,19 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
+
+                                                                    <div class="p-3 tab-pane fade personality-trait-tab" id="personality-trait" role="tabpanel" aria-labelledby="personality-trait-tab">
+                                                                        
+                                                                        <div class="row">
+                                                                            <div class="col-lg-6">
+                                                                                <div class="chart-container">
+                                                                                    <input type="hidden" name="studentID" id="studentID">
+                                                                                    <canvas id="personalityChart"></canvas>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    
+                                                                    </div>
         
                                                                 </div>
         
@@ -506,6 +584,117 @@
 
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
+        {{-- Prospectus Ver Modal --}}
+        <div class="modal fade" id="prospectus-version-modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Prospectus</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <form id="addProsForm" method="POST">
+                                    <input type="hidden" name="pros_id" id="pros_id" value="0">
+                                    <div class="row">
+                                        <div class="col-lg-5">
+                                            <div class="form-floating">
+                                                <input type="text" name="pros_version" required class="form-control" id="pros_version" placeholder="Subject Code">
+                                                <label for="pros_version">Version*</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-5">
+                                            <div class="form-floating">
+                                                <input type="text" name="effectivity" required class="form-control" id="effectivity" placeholder="Subject Code">
+                                                <label for="effectivity">Effectivity*</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-2">
+                                            <button type="submit" id="savePros" class="btn btn-primary h-100 w-100">Save</button>
+                                        </div>
+                                    </div>
+                                    
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Prospectus Versions</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <table id="prosTable" class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Version</th>
+                                            <th>Effectivity</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pros_tbody">
+                                        {{-- Table Content --}}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Version</th>
+                                            <th>Effectivity</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                    </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
+        {{-- Delete Prospectus Modal --}}
+        <div class="modal fade" id="delete-prospectus-modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete Prospectus</h4>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <div class="modal-body text-center">
+                        <h2>Are you sure?</h2>
+                        <p>You are about to delete this version. This action cannot be undone.</p>
+
+                    </div>
+
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" id="deleteProspectus" class="btn btn-danger">Delete</button>
                     </div>
 
                 </div>
@@ -814,6 +1003,7 @@
                         $('#student_id').val('');
                         $('#name').val('');
                         $('#email').val('');
+                        $('#prospectus').val('');
                         $('#course').val('');
                         $('#year_lvl').text('Save');
 
@@ -844,6 +1034,9 @@
                 email: {
                     required: true,
                 },
+                prospectus: {
+                    required: true
+                },
                 course: {
                     required: true
                 },
@@ -860,6 +1053,9 @@
                 },
                 email: {
                     required: "Please enter your email address",
+                },
+                prospectus: {
+                    required: "Please select prospectus version",
                 },
                 course: {
                     required: "Please select a course",
@@ -903,6 +1099,16 @@
                     $('#student_id_edit').val(response.student.student_id);
                     $('#name_edit').val(response.student.name);
                     $('#email_edit').val(response.student.email);
+
+                    $('#selectProspectusVersionEdit').html('');
+                    $.each(response.prospectus, function(key, pros){
+                        if(response.student.prospectus_id == pros.id){
+                            $('#selectProspectusVersionEdit').append('<option selected value="'+pros.id+'">'+pros.version+'</option>');
+                        }else{
+                            $('#selectProspectusVersionEdit').append('<option value="'+pros.id+'">'+pros.version+'</option>');
+                        }
+
+                    });
 
                     $('#selectCourseEdit').html('');
                     $.each(response.courses, function(key, course){
@@ -1088,6 +1294,9 @@
         });
         $('#importStudentForm').validate({
             rules: {
+                prospectus: {
+                    required: true,
+                },
                 course: {
                     required: true,
                 },
@@ -1096,6 +1305,9 @@
                 },
             },
             messages: {
+                prospectus: {
+                    required: "Please select prospectus version",
+                },
                 course: {
                     required: "Please select course",
                 },
@@ -1167,6 +1379,241 @@
         });
 
     });
+
+    // CRUD Functions for Prospectus
+    function fetchPros(){
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            type: "GET",
+            url: "/subjects/fetch-prospectus",
+            dataType: "json",
+            success: function (response){
+                $('#pros_tbody').html('');
+
+                if(response.status == 200){
+                    
+                    var counter = 0;
+                    $.each(response.prospectus, function(key, pros){
+                        counter += 1;
+                        $('#pros_tbody').append('<tr>\
+                                <td>'+counter+'</td>\
+                                <td data-version="'+pros.version+'">'+pros.version+'</td>\
+                                <td data-effectivity="'+pros.effectivity+'">'+pros.effectivity+'</td>\
+                                <td data-id="'+pros.id+'">\
+                                    <Button type="button" value="'+pros.id+'" class="deleteProsBtn btn btn-sm btn-danger">\
+                                        <i class="fas fa-trash"></i>\
+                                    </Button>\
+                                </td>\
+                            </tr>')
+                    });
+                    
+
+                    if(response.prospectus.length == 0){
+                        $('#pros_tbody').append('<tr>\
+                                <td colspan="10">\
+                                    <div class="imgCont">\
+                                        <div class="imgEmpty d-flex justify-content-center align-items-center flex-column" style="height: calc(100% - 120px);">\
+                                            <img src="{{ url("images/empty.png") }}" alt="" style="height: 150px;">\
+                                            <p class="mt-2 fw-bold fs-4" style="color: #7777;">No Records</p>\
+                                        </div>\
+                                    </div>\
+                                </td>\
+                            </tr>');
+                    }else{
+                        if ( $.fn.dataTable.isDataTable( '#prosTable' ) ) {
+                            table = $('#prosTable').DataTable();
+                        }
+                        else {
+                            $("#prosTable").DataTable({
+                                "responsive": true, "lengthChange": false, "autoWidth": false,
+                                "buttons": ["csv","pdf", "print"]
+                                }).buttons().container().appendTo('#prosTable_wrapper .col-md-6:eq(0)');
+
+                            }
+                        }
+
+                        
+                        
+                    }
+
+                }
+
+                
+
+        });
+
+    }
+
+    $(document).on('click', '.addNewPros', function (e) {
+        e.preventDefault();
+        $('#pros_id').val("0");
+        fetchPros();
+        $('#prospectus-version-modal').modal('show');
+    });
+
+    $(function () {
+        $.validator.setDefaults({
+            submitHandler: function () {
+                $('#savePros').text('');
+
+                $('#savePros').prop('disabled', true);
+
+                $('#savePros').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+                let formdata = new FormData($('#addProsForm')[0]);
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "/subjects/save-pros",
+                    data: formdata,
+                    dataType: "json",
+                    contentType: false,
+                    processData: false,
+                    success: function (response){
+                        $('#pros_version').val('');
+                        $('#effectivity').val('');
+                        $('#savePros').text('Save');
+
+                        fetchPros();
+
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message,
+                        })
+
+                        $(".prospectusSelect").load(location.href + " .prospectusSelectInner");
+                        $(".prospectusSelect").load(location.href + " .prospectusSelectInnerImport");
+
+
+                        $('#savePros').prop('disabled', false);
+                    }
+
+                });
+            }
+        });
+        $('#addProsForm').validate({
+            rules: {
+                pros_version: {
+                    required: true,
+                },
+                effectivity: {
+                    required: true,
+                },
+            },
+            messages: {
+                pros_version: {
+                    required: "Please input prospectus version",
+                },
+                effectivity: {
+                    required: "Please input effectivity",
+                },
+            },
+            errorElement: 'span',
+            errorPlacement: function (error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-floating').append(error);
+            },
+            highlight: function (element, errorClass, validClass) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function (element, errorClass, validClass) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+    });
+
+    $(document).on('click', '#prosTable tbody tr', function (e) {
+        e.preventDefault();
+
+        var data = { version: '', effectivity: '', id: '' };
+        
+        $(this).children('td').each(function() {
+            var id = $(this).data('id');
+            if (id) {
+                data.id = id;
+            } 
+
+            var version = $(this).data('version');
+            if (version) {
+                data.version = version;
+            }
+            
+            var effectivity = $(this).data('effectivity');
+            if (effectivity) {
+                data.effectivity = effectivity;
+            }      
+        });
+        
+        $('#pros_id').val(data.id);
+        $('#pros_version').val(data.version);
+        $('#effectivity').val(data.effectivity);
+
+    });
+
+    $(document).on('click', '.deleteProsBtn', function (e) {
+        e.preventDefault();
+        $('#deleteProspectus').val($(this).val());
+        $('#delete-prospectus-modal').modal('show');
+    });
+
+    $(document).on('click', '#deleteProspectus', function (e) {
+        e.preventDefault();
+
+        $('#deleteProspectus').text('');
+
+        $('#deleteProspectus').prop('disabled', true);
+
+        $('#deleteProspectus').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Deleting...');
+
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        var prosID = $(this).val();
+
+        $.ajax({
+            type: "GET",
+            url: "/subjects/delete-prospectus/"+prosID,
+            success: function (response){
+                if(response.status == 200){
+                    Toast.fire({
+                        icon: 'success',
+                        title: response.message,
+                    })
+
+                    $('#deleteProspectus').text('Delete');
+
+                    $('#deleteProspectus').prop('disabled', false);
+                    $('#delete-prospectus-modal').modal('hide');
+
+                    $('#pros_id').val("0");
+                    $('#pros_version').val("");
+                    $('#effectivity').val("");
+
+                    $(".prospectusSelect").load(location.href + " .prospectusSelect");
+                    $(".prospectusSelect").load(location.href + " .prospectusSelectInnerImport");
+
+                    fetchPros();
+                }
+            }
+        });
+
+    });
+
 
     // Select Courses CRUD Functions
     function fetchCourses(){
@@ -1405,10 +1852,62 @@
 
     });
 
+    let personalityChartInstance = null
+    function initPersonalityChart() {
+        var studentID = $('#studentID').val();
+        $.ajax({
+            type: "GET",
+            url: "/personality-test-results/get-test-results/"+studentID,
+            contentType: false,
+            processData: false,
+            success: function (response){        
+            var ctx = $("#personalityChart")[0].getContext("2d");        
+            if (personalityChartInstance !== null) {
+                personalityChartInstance.destroy();
+            }
+            
+            personalityChartInstance = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: ["Openness", "Conscientiousness", "Extraversion", "Agreeableness", "Neuroticism"],
+                    datasets: [{
+                        label: "Score",
+                        data: response.testResults,
+                        backgroundColor: "rgba(54, 162, 235, 0.7)",
+                        borderColor: "rgba(54, 162, 235, 1)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: "y", // Horizontal bar chart
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 10
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false // Hides the legend
+                        }
+                    }
+                }
+            });
+
+            }
+
+        });
+
+    }
+    
     $(document).on('click', '.viewStudentBtn', function (e) {
         e.preventDefault();
 
         var studentID = $(this).val();
+        $('#studentID').val(studentID);
 
         $('#studentIdEditView').val(studentID);
 
@@ -1517,7 +2016,8 @@
                     // Now render grouped data
                     let htmlContent = "";
                     $.each(groupedGrades, function(key, group){
-                        var semText = group.semester == 1 ? '1st Semester' : '2nd Semester';
+                        var semText = group.semester == 1 ? '1st Semester' : group.semester == 2 ? '2nd Semester' : 'Summer Class';
+
                         htmlContent += `
                             <div class="col-lg-6">
                                 <div class="gradeWrapper">
@@ -1547,15 +2047,17 @@
                     });
 
                     // Append generated HTML to container
-                    $(".grade-container").html(htmlContent);
+                    $(".grade-container").html(htmlContent); 
 
+                   
 
-                    
 
                 }
             }
         });
 
+        // For Personality Trait
+        initPersonalityChart();
         $('#view-student-modal').modal('show');
     });
 

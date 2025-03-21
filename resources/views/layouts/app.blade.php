@@ -37,6 +37,8 @@
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
         <link rel="stylesheet" href="{{ asset('css/bootstrap-select.css') }}">
 
         {{-- <script src="{{ asset('js/bootstrap-select.js') }}"></script>         --}}

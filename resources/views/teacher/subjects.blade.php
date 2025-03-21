@@ -203,6 +203,7 @@
                                           <option value="" selected>Select semester</option>
                                           <option value="1">1st</option>
                                           <option value="2">2nd</option>
+                                          <option value="3">Summer</option>
                                         </select>
                                         <label for="semester">Select semester*</label>
                                     </div>
@@ -321,6 +322,7 @@
                                   <option value="" selected>Select semester</option>
                                   <option value="1">1st</option>
                                   <option value="2">2nd</option>
+                                  <option value="3">Summer</option>
                                 </select>
                                 <label for="semesterEdit">Select semester</label>
                             </div>
@@ -389,7 +391,7 @@
                                     <i class="right fas fa-download"></i>
                                 </span>
                             </div>
-
+ 
                             <div class="row mb-2">
                                 <div class="col-9"> 
                                     <div class="prospectusSelect">
@@ -978,15 +980,19 @@
                     $('#semesterEdit').html('');
                     var selectedSem1 = '';
                     var selectedSem2 = '';
+                    var selectedSem3 = '';
 
                     if(response.subject.semester == 1){
                         selectedSem1 = 'selected';
                     }else if(response.subject.semester == 2){
                         selectedSem2 = 'selected';
+                    }else if(response.subject.semester == 3){
+                        selectedSem3 = 'selected';
                     }
 
                     $('#semesterEdit').append('<option '+selectedSem1+' value="1">1st</option>\
-                                            <option '+selectedSem2+' value="2">2nd</option>');
+                                            <option '+selectedSem2+' value="2">2nd</option>\
+                                            <option '+selectedSem3+' value="3">Summer</option>');
 
 
                     $('#selectProspectusVersionEdit').html('');

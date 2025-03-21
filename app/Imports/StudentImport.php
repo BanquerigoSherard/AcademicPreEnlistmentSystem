@@ -15,10 +15,12 @@ class StudentImport implements ToCollection, WithHeadingRow
     */
 
     private $course_id;
+    private $prospectus_id;
 
-    public function __construct($course_id)
+    public function __construct($course_id, $prospectus_id)
     {
         $this->course_id = $course_id;
+        $this->prospectus_id = $prospectus_id;
     }
     public function collection(Collection $collection)
     {
@@ -32,6 +34,7 @@ class StudentImport implements ToCollection, WithHeadingRow
                     'student_id' => $row['studentid'],
                     'name' => $row['name'],
                     'email' => $row['email'],
+                    'prospectus_id' => $this->prospectus_id,
                     'course_id' => $this->course_id,
                     'year_level' => $row['yearlvl'],
                 ]);

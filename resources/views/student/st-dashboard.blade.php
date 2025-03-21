@@ -67,7 +67,90 @@
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
-</div>
+   </div>
+
+   <div class="modal fade" id="personality-trait-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Personality Trait Score</h4>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form id="testScoreForm" method="POST">
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="alert alert-warning" role="alert">
+                        Please submit your "Personality Trait Scores"
+                    </div>
+
+                    <h4 class="fs-4 fw-bold">Your Personality Trait Scores</h4>
+                    <p>This Big Five assessment measures your scores on five major dimensions of personality: Openness, Conscientiousness, Extraversion, Agreeableness, and Neuroticism (sometimes abbreviated OCEAN).</p>
+                    
+                    <a href="https://www.idrlabs.com/big-five-types/test.php" target="_blank" class="text-primary text-decoration-underline">
+                        Click here to take the personality test <br>
+                    </a>
+                    <a href="https://www.idrlabs.com/big-five-types/test.php" target="_blank"><span class="text-primary">https://www.idrlabs.com/big-five-types/test.php</span></a>
+                </div>
+
+                <div class="row">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="number" required name="openness" min=1 max=100 class="form-control" id="openness" placeholder="Score">
+                                <label for="openness">Openness</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="number" required name="conscientiousness" min=1 max=100 class="form-control" id="conscientiousness" placeholder="Score">
+                                <label for="conscientiousness">Conscientiousness</label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="number" required name="extraversion" min=1 max=100 class="form-control" id="extraversion" placeholder="Score">
+                                <label for="extraversion">Extraversion</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="number" required name="agreeableness" min=1 max=100 class="form-control" id="agreeableness" placeholder="Score">
+                                <label for="agreeableness">Agreeableness</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="number" required name="neuroticism" min=1 max=100 class="form-control" id="neuroticism " placeholder="Score">
+                                <label for="neuroticism ">Neuroticism </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                <button type="submit" id="submitScore" class="submitScore btn btn-primary">Submit</button>
+            </div>
+            </form>
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+   </div>
 
 {{-- End Modals --}}
 
@@ -119,11 +202,13 @@
                                 </select>
                             </div> --}}
                           
-
+                            @if (Auth::user()->current_subjects_status != 1)
                             <button type="button" id="addSubjBtn" data-toggle="modal" class="btn btn-sm btn-primary float-right">
                                 <i class="nav-icon fas fa-solid fa-plus"></i>
                                 <span>Add Subject</span>
                             </button>
+                            @endif
+                        
                     </div>
                 </div>
                 @endif
@@ -191,7 +276,7 @@
                                                             $checked = "checked";
                                                         @endphp
                                                     @endif
-                                                @endforeach
+                                                @endforeach 
                                                 @if (Auth::user()->current_subjects_status == 1)
                                                     @if ($checked == "checked")
                                                         <tr>
@@ -503,30 +588,166 @@
     });
 
     // Lock Grades
-    $(document).on('click', '.lockGradesBtn', function (e) {
-        e.preventDefault();
+    $(document).ready(function () {
+        let personalitySubmitted = localStorage.getItem("personalitySubmitted") === "true";
 
-        $('#lock-grades-modal').modal('show');
+        $(document).on('click', '.lockGradesBtn', function (e) {
+            e.preventDefault();
+
+            if (!personalitySubmitted) {
+                $('#personality-trait-modal').modal('show');
+            } else {
+                $('#lock-grades-modal').modal('show');
+            }
+        });
+
+        // Handle Personality Trait Submission
+        $(function () {
+            $.validator.setDefaults({
+                submitHandler: function () {
+                    $('.submitScore').text('');
+
+                    $('.submitScore').prop('disabled', true);
+
+                    $('.submitScore').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
+
+                    let formdata = new FormData($('#testScoreForm')[0]);
+
+                    $.ajaxSetup({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    });
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/student/submit-test-score",
+                        data: formdata,
+                        dataType: "json",
+                        contentType: false,
+                        processData: false,
+                        success: function (response){
+                            $('.submitScore').text('Submit');
+
+                            Toast.fire({
+                                icon: 'success',
+                                title: response.message,
+                            })
+
+                            $('.submitScore').prop('disabled', false);
+
+                            personalitySubmitted = true;
+                            localStorage.setItem("personalitySubmitted", "true");
+                            $('#personality-trait-modal').modal('hide');
+
+                            setTimeout(() => {
+                                $('#lock-grades-modal').modal('show');
+                            }, 500);
+                        }
+
+                    });
+                }
+            });
+            $('#testScoreForm').validate({
+                rules: {
+                    openness: {
+                        required: true,
+                    },
+                    conscientiousness: {
+                        required: true,
+                    },
+                    extraversion: {
+                        required: true,
+                    },
+                    agreeableness: {
+                        required: true,
+                    },
+                    neuroticism: {
+                        required: true,
+                    },
+                },
+                messages: {
+                    openness: {
+                        required: "Please enter you score for 'Openness'",
+                        min: "The minimum score is 1",
+                        max: "The maximum score is 100",
+                    },
+                    conscientiousness: {
+                        required: "Please enter you score for 'Conscientiousness'",
+                        min: "The minimum score is 1",
+                        max: "The maximum score is 100",
+                    },
+                    extraversion: {
+                        required: "Please enter you score for 'Extraversion'",
+                        min: "The minimum score is 1",
+                        max: "The maximum score is 100",
+                    },
+                    agreeableness: {
+                        required: "Please enter you score for 'Agreeableness'",
+                        min: "The minimum score is 1",
+                        max: "The maximum score is 100",
+                    },
+                    neuroticism: {
+                        required: "Please enter you score for 'Neuroticism'",
+                        min: "The minimum score is 1",
+                        max: "The maximum score is 100",
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-floating').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        });
+
+        // Lock Grades Submission
+        $(document).on('click', '#lockGrades', function (e) {
+            e.preventDefault();
+
+            $('#lockGrades').text('');
+
+            $('#lockGrades').prop('disabled', true);
+
+            $('#lockGrades').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Locking...');
+
+            $.ajax({
+                type: "GET",
+                url: "/student/lock-grades",
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if(response.status == 200){
+                        Toast.fire({
+                            icon: 'success',
+                            title: response.message
+                        });
+
+                        $('#lock-grades-modal').modal('hide');
+                        $(".pageContent").load(location.href + " .pageContent");
+
+                        $('#lockGrades').text('Lock Grades').prop('disabled', false);
+
+                    }else if(response.status == 400){
+                        $('#lockGrades').text('Lock Grades').prop('disabled', false);
+
+                        Toast.fire({
+                            icon: 'error',
+                            title: response.message
+                        });
+                    }
+                    
+                }
+            });
+        });
     });
 
-    $(document).on('click', '#lockGrades', function (e) {
-          $.ajax({
-              type: "GET",
-              url: "/student/lock-grades",
-              contentType: false,
-              processData: false,
-              success: function (response){
-                  Toast.fire({
-                      icon: 'success',
-                      title: response.message,
-                  })
-
-                  $('#lock-grades-modal').modal('hide');
-                  $(".pageContent").load(location.href + " .pageContent");
-              }
-
-          });
-      });
 
     $(function () {
         $.validator.setDefaults({

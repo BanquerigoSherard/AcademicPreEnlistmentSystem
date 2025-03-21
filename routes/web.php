@@ -47,6 +47,10 @@ Route::group(['middleware' => ['auth', 'verified', 'role:student']] ,function ()
     Route::post('/student/submit-test-score', [StudentController::class, 'submitscore'])->name('student.submitscore');
 
 });
+// Personality Trait View both for student and teacher
+Route::get('/personality-test-results/get-test-results/{id}', [StudentController::class, 'getTestResults'])->name('get-test-results');
+// Add Subject Both in student and teacher
+Route::post('/student/add-subject', [StudentController::class, 'addsubject'])->name('student.addsubjects');
 
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
@@ -67,6 +71,7 @@ Route::group(['middleware' => ['auth', 'role:teacher||superadministrator']] ,fun
     Route::get('/pre-requisites', function () {
         return view('teacher.pre-requisites');
     })->name('pre-requisites');
+    
 
     // Manage Students Routes
     Route::get('/students', [ManageStudentController::class, 'index'])->name('index.student');
@@ -80,9 +85,7 @@ Route::group(['middleware' => ['auth', 'role:teacher||superadministrator']] ,fun
     
 
     // Enlistment Routes
-    Route::get('/enlistment', function () {
-        return view('teacher.enlistment');
-    })->name('enlistment'); 
+    Route::get('/enlistment', [EnlistmentController::class, 'index'])->name('enlistment');
 
     Route::get('/enlistment/fetch-subjects/{id}', [EnlistmentController::class, 'fetchSubjects'])->name('enlistment.fetchSubjects');
     

@@ -25,6 +25,7 @@ class User extends Authenticatable implements LaratrustUser, MustVerifyEmail
         'name',
         'email',
         'password',
+        'prospectus_id',
         'course_id',
         'year_level',
         'current_subjects',

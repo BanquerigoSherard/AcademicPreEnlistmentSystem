@@ -9,14 +9,16 @@ use App\Models\User;
 use App\Models\Course;
 use App\Models\Subject;
 use App\Models\Grade;
+use App\Models\Prospectus;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class ManageStudentController extends Controller
 {
     public function index(){
+        $prospectus = Prospectus::all();
         $courses = Course::all();
-        return view('teacher.students', compact('courses'));
+        return view('teacher.students', compact('courses', 'prospectus'));
     } 
 
     public function import(Request $request){
@@ -27,9 +29,10 @@ class ManageStudentController extends Controller
 
         if($request->hasFile('importFile')){
             $course_id = htmlspecialchars($request->input('course'));
+            $prospectus_id = htmlspecialchars($request->input('prospectus'));
 
             $file = $request->file('importFile');
-            Excel::import(new StudentImport($course_id), $file);filePath: 
+            Excel::import(new StudentImport($course_id, $prospectus_id), $file);filePath: 
 
             return response()->json([
                 'status'=>200,
@@ -58,6 +61,7 @@ class ManageStudentController extends Controller
             'student_id' => ['required', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'prospectus' => ['required', 'string', 'max:255'],
             'course' => ['required', 'string', 'max:255'],
             'year_lvl' => ['required', 'string', 'max:255'],
         ]);
@@ -82,6 +86,7 @@ class ManageStudentController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make(implode($password)),
+                'prospectus_id' => $request->prospectus,
                 'course_id' => $request->course,
                 'year_level' => $request->year_lvl,
             ]);
@@ -101,6 +106,7 @@ class ManageStudentController extends Controller
     public function edit($id){
         $student = User::find($id);
         $courses = Course::all();
+        $prospectus = Prospectus::all();
         $grades = Grade::where([ ['student_id', '=', $id] ])->orderBy('id', 'DESC')->get();
         $subjects = [];
         foreach ($grades as $grade) {
@@ -114,6 +120,7 @@ class ManageStudentController extends Controller
                 'courses'=>$courses,
                 'subjects'=>$subjects,
                 'grades'=>$grades,
+                'prospectus'=>$prospectus,
             ]);
         }
     }
@@ -123,6 +130,7 @@ class ManageStudentController extends Controller
             'student_id' => ['required', 'string', 'max:255'],
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+            'prospectus' => ['required', 'string', 'max:255'],
             'course' => ['required', 'string', 'max:255'],
             'year_lvl' => ['required', 'string', 'max:255'],
         ]);
@@ -140,6 +148,7 @@ class ManageStudentController extends Controller
                 $student->student_id = htmlspecialchars($request->input('student_id'));
                 $student->name = htmlspecialchars($request->input('name'));
                 $student->email = htmlspecialchars($request->input('email'));
+                $student->prospectus_id = htmlspecialchars($request->input('prospectus'));
                 $student->course_id = htmlspecialchars($request->input('course'));
                 $student->year_level = htmlspecialchars($request->input('year_lvl'));
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\AcademicTerm;
+use App\Models\Course;
 use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,12 @@ use Illuminate\Http\Request;
 
 class EnlistmentController extends Controller
 {
+    public function index(){
+        $academicTerm = AcademicTerm::find(1);
+        $allSubjects = Subject::all();
+        $courses = Course::all();
+        return view('teacher.enlistment', compact('allSubjects', 'academicTerm', 'courses'));
+    } 
     public function fetchSubjects($id){
 
         $student = User::find($id);
