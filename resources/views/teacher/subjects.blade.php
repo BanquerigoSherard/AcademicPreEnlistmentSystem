@@ -174,13 +174,28 @@
                                 </div>
                             </div>
                             
-                            <div class="multiSelect mb-2">
-                                <label>Pre-requisites</label>
-                                <select class="selectpicker form-control" name="pre_requisites[]" id="pre-requisites" data-live-search="true" title="Select Subject" data-hide-disabled="true" data-actions-box="true" multiple>
-                                    @foreach ($subjects as $subject)
-                                        <option value="{{ $subject->subject_code }}">{{ $subject->subject_code }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="multiSelect mb-2">
+                                        <label>Pre-requisites</label>
+                                        <select class="selectpicker form-control" name="pre_requisites[]" id="pre-requisites" data-live-search="true" title="Select Subject" data-hide-disabled="true" data-actions-box="true" multiple>
+                                            @foreach ($subjects as $subject)
+                                                <option value="{{ $subject->subject_code }}">{{ $subject->subject_code }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="row mb-3 ms-2">
+                                        <div class="col-12">
+                                            <label class="form-label">Is this a core subject?</label>
+                                            <div class="form-check form-switch ms-3">
+                                                <input class="form-check-input" type="checkbox" id="is_core_subject" name="is_core_subject" value="1">
+                                                <label class="form-check-label" for="is_core_subject">Yes, this is a core subject</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="row">
@@ -297,13 +312,29 @@
                                 <label for="lab_units_edit">Lab Units</label>
                             </div>
 
-                            <div class="multiSelect mb-2">
-                                <label>Pre-requisites</label>
-                                <select class="selectpicker form-control" name="pre_requisites[]" id="pre_requisites_edit" data-live-search="true" title="Select Subject" data-hide-disabled="true" data-actions-box="true" multiple>
-                                    @foreach ($subjects as $subject)
-                                        <option value="{{ $subject->subject_code }}">{{ $subject->subject_code }}</option>
-                                    @endforeach
-                                </select>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="multiSelect mb-2">
+                                        <label>Pre-requisites</label>
+                                        <select class="selectpicker form-control" name="pre_requisites[]" id="pre_requisites_edit" data-live-search="true" title="Select Subject" data-hide-disabled="true" data-actions-box="true" multiple>
+                                            @foreach ($subjects as $subject)
+                                                <option value="{{ $subject->subject_code }}">{{ $subject->subject_code }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="row mb-3 ms-2">
+                                        <div class="col-12">
+                                            <label class="form-label">Is this a core subject?</label>
+                                            <div class="form-check form-switch ms-3">
+                                                <input class="form-check-input" type="checkbox" id="is_core_subject_edit" name="is_core_subject" value="1">
+                                                <label class="form-check-label" for="is_core_subject_edit">Yes, this is a core subject</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="form-floating mb-2">
@@ -1026,6 +1057,13 @@
                     });
 
                     $('#pre_requisites_edit').selectpicker('val', pre_requisites);
+
+                    if (response.subject.is_core_subject == 1) {
+                        $('#is_core_subject_edit').prop('checked', true);
+                    } else {
+                        $('#is_core_subject_edit').prop('checked', false);
+                    }
+                    
 
                 }
             }

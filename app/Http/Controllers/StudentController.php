@@ -17,7 +17,6 @@ class StudentController extends Controller
         $academicTerm = AcademicTerm::find(1);
         $allSubjects = Subject::all();
         $subjects = Subject::where([ ['year_lvl', '=', $yearLvl], ['semester', '=', $academicTerm->semester], ['prospectus_id', '=', Auth::user()->prospectus_id] ])->get();
-        // $subjects = Subject::where([['semester', '=', $academicTerm->semester] ])->get();
         $grades = Grade::where([ ['student_id', '=', Auth::user()->id] ])->get();
         $course = Course::find(Auth::user()->course_id);
         
@@ -36,6 +35,31 @@ class StudentController extends Controller
                     $subjects->add($subject);
                 }  
             }
+        }
+
+        // Get all passed subjects (only subject IDs)
+        $passedSubjects = Grade::where('student_id', Auth::user()->id)->whereRaw("CAST(grade AS DECIMAL(5,2)) <= 3.0")->pluck('subject_id')->toArray();
+
+        $maxYearLevel = 4;
+        $currentYearLvl = Auth::user()->year_level;
+        $prospectusId = Auth::user()->prospectus_id;
+
+        for ($year = 1; $year <= $maxYearLevel; $year++) {
+            $coreSubjects = Subject::where([['prospectus_id', '=', $prospectusId],
+                                                    ['is_core_subject', '=', 1],
+                                                    ['year_lvl', '=', $year]])->pluck('id')->toArray();
+
+            $hasPassedAllCore = empty(array_diff($coreSubjects, $passedSubjects));
+
+            if ($hasPassedAllCore) {
+                $currentYearLvl = $year + 1;
+            }else{
+                break;
+            }
+        }
+
+        if ($currentYearLvl !== Auth::user()->year_level) {
+            Auth::user()->update(['year_level' => $currentYearLvl]);
         }
 
         if($subjects){

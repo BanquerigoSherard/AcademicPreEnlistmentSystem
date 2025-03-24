@@ -39,9 +39,14 @@ class SubjectController extends Controller
             ]);
         }else{
             $preRequisites = "";
-            foreach($request->input('pre_requisites') as $preRequisite){
-                $preRequisites.= $preRequisite.",";
+            if ($request->has('pre_requisites') && is_array($request->input('pre_requisites'))) {
+                $preRequisites = implode(",", array_filter($request->input('pre_requisites')));
+            }else{
+                $preRequisites = "None";
             }
+
+            // Handle core subject toggle
+            $isCoreSubject = $request->has('is_core_subject') ? 1 : 0;
 
             $subject = new Subject;
             $subject->prospectus_id = htmlspecialchars($request->input('prospectus'));
@@ -53,6 +58,7 @@ class SubjectController extends Controller
             $subject->pre_requisites = $preRequisites;
             $subject->year_lvl = htmlspecialchars($request->input('year_lvl'));
             $subject->semester = htmlspecialchars($request->input('semester'));
+            $subject->is_core_subject = $isCoreSubject;
 
             $subject->save();
 
@@ -123,6 +129,9 @@ class SubjectController extends Controller
                     $preRequisites = "None";
                 }
 
+                // Handle core subject toggle
+                $isCoreSubject = $request->has('is_core_subject') ? 1 : 0;
+
                 $subject->pre_requisites = $preRequisites;
                 $subject->prospectus_id = htmlspecialchars($request->input('prospectus'));
                 $subject->course_id = htmlspecialchars($request->input('course'));
@@ -133,6 +142,7 @@ class SubjectController extends Controller
                 $subject->pre_requisites = $preRequisites;
                 $subject->year_lvl = htmlspecialchars($request->input('year_lvl'));
                 $subject->semester = htmlspecialchars($request->input('semester'));
+                $subject->is_core_subject = $isCoreSubject;
 
                 $subject->update();
 

@@ -20,5 +20,6 @@ class Subject extends Model
         'lab_units',
         'year_lvl',
         'semester',
+        'is_core_subject',
     ];
 }

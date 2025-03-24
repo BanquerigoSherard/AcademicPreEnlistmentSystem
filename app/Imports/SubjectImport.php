@@ -41,6 +41,7 @@ class SubjectImport implements ToCollection, WithHeadingRow
                     'lab_units' => $row['labunits'],
                     'year_lvl' => $row['yearlvl'],
                     'semester' => $row['semester'],
+                    'is_core_subject' => $row['is_core_subject'],
                 ]);
             }else{
                 Subject::create([
@@ -53,6 +54,7 @@ class SubjectImport implements ToCollection, WithHeadingRow
                     'lab_units' => $row['labunits'],
                     'year_lvl' => $row['yearlvl'],
                     'semester' => $row['semester'],
+                    'is_core_subject' => $row['is_core_subject'],
                 ]);
 
             }

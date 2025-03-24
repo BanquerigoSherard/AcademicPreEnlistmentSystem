@@ -30,6 +30,8 @@ class User extends Authenticatable implements LaratrustUser, MustVerifyEmail
         'year_level',
         'current_subjects',
         'current_subjects_status',
+        'personality_trait_score',
+        'personality_trait_score_status',
     ];
 
     /**
