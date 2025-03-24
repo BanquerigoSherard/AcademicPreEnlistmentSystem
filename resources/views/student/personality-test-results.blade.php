@@ -4,7 +4,53 @@
             {{ __('Personality Trait Scores') }}
         </h2>
     </x-slot>
+
+    {{-- Modals --}}
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="confirmationModalLabel">Confirm Submission</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            Are you sure you want to submit? You can only submit once per semester.
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="confirmSubmit">Submit</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal - Already Submitted -->
+    <div class="modal fade" id="confirmationModalSubmitted" tabindex="-1" role="dialog" aria-labelledby="confirmationModalSubmittedLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="confirmationModalSubmittedLabel">Submission Already Completed</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+            You have already submitted your test score for this semester. Submissions are allowed only once per semester.
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+        </div>
+    </div>
   
+
+    {{-- End Modal --}}
+   
     <div class="pb-12 pt-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="row">
@@ -71,6 +117,7 @@
                                     </div>
     
                                     <div class="btn-submit-wrapper mb-3">
+                                        <input type="hidden" name="personalitySubmitted" id="personalitySubmitted" value="{{Auth::user()->personality_trait_score_status}}">
                                         <button type="submit" class="submitScore btn btn-primary">Submit</button>
                                     </div>
                                     
@@ -171,45 +218,92 @@
         });
 
         $(function () {
+            var personalitySubmitted = $('#personalitySubmitted').val();
+
             $.validator.setDefaults({
                 submitHandler: function () {
-                    $('.submitScore').text('');
-
-                    $('.submitScore').prop('disabled', true);
-
-                    $('.submitScore').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
-
-                    let formdata = new FormData($('#testScoreForm')[0]);
-
-                    $.ajaxSetup({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        }
-                    });
-
-                    $.ajax({
-                        type: "POST",
-                        url: "/student/submit-test-score",
-                        data: formdata,
-                        dataType: "json",
-                        contentType: false,
-                        processData: false,
-                        success: function (response){
-                            $('.submitScore').text('Submit');
-
-                            Toast.fire({
-                                icon: 'success',
-                                title: response.message,
-                            })
-
-                            initPersonalityChart();
-
-                            $('.submitScore').prop('disabled', false);
-                        }
-
-                    });
+                    // Show confirmation modal before submitting
+                    if (personalitySubmitted == 0) {
+                        $('#confirmationModal').modal('show');
+                    }else{
+                        $('#confirmationModalSubmitted').modal('show');
+                    }
                 }
             });
+            $('#confirmSubmit').on('click', function () {
+                $('#confirmSubmit').text('').prop('disabled', true);
+                $('#confirmSubmit').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
+
+                let formdata = new FormData($('#testScoreForm')[0]);
+                
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                
+                $.ajax({
+                    type: "POST",
+                    url: "/student/submit-test-score",
+                    data: formdata,
+                    dataType: "json",
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        $('#confirmSubmit').text('Submit').prop('disabled', false);
+                        Toast.fire({ icon: 'success', title: response.message });
+                        $('#confirmationModal').modal('hide');
+                        initPersonalityChart();
+                    },
+                    error: function (xhr) {
+                        $('#confirmSubmit').text('Submit').prop('disabled', false);
+                        if (xhr.status === 400) {
+                            alert(xhr.responseJSON.error);
+                        }
+                    }
+                });
+            });
+            // $.validator.setDefaults({
+            //     submitHandler: function () {
+            //         $('.submitScore').text('');
+
+            //         $('.submitScore').prop('disabled', true);
+
+            //         $('.submitScore').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Submitting...');
+
+            //         let formdata = new FormData($('#testScoreForm')[0]);
+
+            //         $.ajaxSetup({
+            //             headers: {
+            //                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            //             }
+            //         });
+
+            //         $.ajax({
+            //             type: "POST",
+            //             url: "/student/submit-test-score",
+            //             data: formdata,
+            //             dataType: "json",
+            //             contentType: false,
+            //             processData: false,
+            //             success: function (response){
+            //                 $('.submitScore').text('Submit');
+
+            //                 Toast.fire({
+            //                     icon: 'success',
+            //                     title: response.message,
+            //                 })
+
+            //                 initPersonalityChart();
+
+            //                 $('.submitScore').prop('disabled', false);
+            //             }
+
+            //         });
+            //     }
+            // });
+
+
             $('#testScoreForm').validate({
                 rules: {
                     openness: {

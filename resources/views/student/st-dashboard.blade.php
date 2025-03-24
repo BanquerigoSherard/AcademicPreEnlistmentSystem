@@ -461,6 +461,7 @@
                                     </div> 
                                 @elseif (Auth::user()->current_subjects_status == 2 && $academicTerm->grade_status == "Activated")
                                     <div class="float-right">
+                                        <input type="hidden" name="personalitySubmitted" id="personalitySubmitted" value="{{Auth::user()->personality_trait_score_status}}">
                                         <button type="button" class="lockGradesBtn btn btn-sm btn-primary">Lock Grades</button>
                                         <button type="submit" value="{{Auth::user()->id}}" class="saveGrades btn btn-sm btn-success">Save Grades</button>   
                                     </div> 
@@ -631,12 +632,13 @@
 
     // Lock Grades
     $(document).ready(function () {
-        let personalitySubmitted = localStorage.getItem("personalitySubmitted") === "true";
+        var personalitySubmitted = $('#personalitySubmitted').val();
+        
 
         $(document).on('click', '.lockGradesBtn', function (e) {
             e.preventDefault();
 
-            if (!personalitySubmitted) {
+            if (personalitySubmitted == 0) {
                 $('#personality-trait-modal').modal('show');
             } else {
                 $('#lock-grades-modal').modal('show');
@@ -678,8 +680,6 @@
 
                             $('.submitScore').prop('disabled', false);
 
-                            personalitySubmitted = true;
-                            localStorage.setItem("personalitySubmitted", "true");
                             $('#personality-trait-modal').modal('hide');
 
                             setTimeout(() => {

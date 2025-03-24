@@ -175,6 +175,7 @@ class StudentController extends Controller
 
         if($selectedUser){
             $selectedUser->personality_trait_score = $scores;
+            $selectedUser->personality_trait_score_status = 1;
             $selectedUser->update();
             return response()->json([
                 'status'=>200,

@@ -40,6 +40,7 @@ class AcademicTermController extends Controller
                 foreach ($users as $user) {
                     $selectedUser = User::find($user->id);
                     $selectedUser->current_subjects_status = 0;
+                    $selectedUser->personality_trait_score_status = 0;
                     $selectedUser->update();
                 }
     
