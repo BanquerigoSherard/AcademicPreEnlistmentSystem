@@ -27,7 +27,7 @@ class StudentController extends Controller
         foreach ($subjects as $subject) {
             array_push($selectedSubjIds, $subject->id);
         }
-
+ 
         foreach ($allSubjects as $subject) {
             if(in_array($subject->id, $subj_ids)){
                 if(in_array($subject->id, $selectedSubjIds)){

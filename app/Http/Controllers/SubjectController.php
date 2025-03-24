@@ -117,10 +117,13 @@ class SubjectController extends Controller
 
             if($subject){
                 $preRequisites = "";
-                foreach($request->input('pre_requisites') as $preRequisite){
-                    $preRequisites.= $preRequisite.",";
+                if ($request->has('pre_requisites') && is_array($request->input('pre_requisites'))) {
+                    $preRequisites = implode(",", array_filter($request->input('pre_requisites')));
+                }else{
+                    $preRequisites = "None";
                 }
 
+                $subject->pre_requisites = $preRequisites;
                 $subject->prospectus_id = htmlspecialchars($request->input('prospectus'));
                 $subject->course_id = htmlspecialchars($request->input('course'));
                 $subject->subject_code = htmlspecialchars($request->input('subject_code'));

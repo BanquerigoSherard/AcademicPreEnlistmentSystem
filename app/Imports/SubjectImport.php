@@ -29,7 +29,7 @@ class SubjectImport implements ToCollection, WithHeadingRow
         foreach ($collection as $row) 
         { 
 
-            $subject = Subject::where('subject_code', $row['subjectcode'])->first();
+            $subject = Subject::where([ ['subject_code', '=', $row['subjectcode']], ['prospectus_id', '=', $this->pros_id] ])->first();
 
             if($subject){
                 $subject->update([

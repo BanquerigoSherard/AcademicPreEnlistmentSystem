@@ -202,7 +202,7 @@
                                 </select>
                             </div> --}}
                           
-                            @if (Auth::user()->current_subjects_status != 1)
+                            @if (Auth::user()->current_subjects_status == 0)
                             <button type="button" id="addSubjBtn" data-toggle="modal" class="btn btn-sm btn-primary float-right">
                                 <i class="nav-icon fas fa-solid fa-plus"></i>
                                 <span>Add Subject</span>
@@ -256,7 +256,7 @@
                                         @php
                                          $counter = 0;
                                          $subj_ids = explode(',', Auth::user()->current_subjects);
-                                         
+                                         $isNotTakenOrFailedCounter = 0;
                                         @endphp
 
                                         @if (Auth::user()->current_subjects_status == 3)
@@ -365,9 +365,25 @@
                                                         
                                                     @endforeach
                                                     @php
-                                                    $failedSubjStr = implode(',', $failedSubj)
+                                                    $failedSubjStr = implode(',', $failedSubj);
+                                                    $isAlreadyTaken = false;
+    
+                                                    // Check if the subject has already been taken and passed
+                                                    foreach ($grades as $grade) {
+                                                        if ($grade->subject_id == $subject->id && $grade->student_id == Auth::user()->id) {
+                                                            if ((int)$grade->grade <= 3.0 && $grade->status == 1) {
+                                                                $isAlreadyTaken = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+
+                                                    if(!$isAlreadyTaken){
+                                                        $isNotTakenOrFailedCounter += 1;
+                                                    }
+                                                    
                                                     @endphp
-                                                    <tr class="tRow {{$bgColor}}">
+                                                    {{-- <tr class="tRow {{$bgColor}}">
                                                         <td>{{$counter}}</td>
                                                         <td>{{ $subject->subject_code }}</td>
                                                         <td>
@@ -376,16 +392,15 @@
                                                         <td>Lec: {{$subject->lec_units}} Lab: {{$subject->lab_units}}<br>Total: {{$totalUnits}}</td>
                                                         <td>
                                                             @if ($bgColor != '')
-                                                            @if ($subjGrade == "DRP")
-                                                                You dropped <span class="badge text-bg-warning">{{$failedSubjStr}}</span>
-                                                            @elseif($subjGrade == "INC")
-                                                                You are INC in <span class="badge text-bg-warning">{{$failedSubjStr}}</span>
-                                                            @elseif($subjGrade == "AW" || $subjGrade == "UW")
-                                                                You withdrew from the subject <span class="badge text-bg-warning">{{$failedSubjStr}} (Grade:{{$subjGrade}})</span>
-                                                            @else
-                                                                You failed <span class="badge text-bg-warning">{{$failedSubjStr}} (Grade:{{$subjGrade}})</span>
-                                                            @endif
-                                                                
+                                                                @if ($subjGrade == "DRP")
+                                                                    You dropped <span class="badge text-bg-warning">{{$failedSubjStr}}</span>
+                                                                @elseif($subjGrade == "INC")
+                                                                    You are INC in <span class="badge text-bg-warning">{{$failedSubjStr}}</span>
+                                                                @elseif($subjGrade == "AW" || $subjGrade == "UW")
+                                                                    You withdrew from the subject <span class="badge text-bg-warning">{{$failedSubjStr}} (Grade:{{$subjGrade}})</span>
+                                                                @else
+                                                                    You failed <span class="badge text-bg-warning">{{$failedSubjStr}} (Grade:{{$subjGrade}})</span>
+                                                                @endif
                                                             @else
                                                                 <div class="custom-control custom-checkbox">
                                                                     <label class="checkbox">
@@ -394,7 +409,34 @@
                                                             @endif
                                                             
                                                         </td>
-                                                    </tr> 
+                                                    </tr>  --}}
+                                                    <tr class="tRow {{$bgColor}}">
+                                                        <td>{{$counter}}</td>
+                                                        <td>{{ $subject->subject_code }}</td>
+                                                        <td>{{ $subject->description }}</td>
+                                                        <td>Lec: {{$subject->lec_units}} Lab: {{$subject->lab_units}}<br>Total: {{$totalUnits}}</td>
+                                                        <td>
+                                                            @if ($isAlreadyTaken)
+                                                                <span class="badge text-bg-success">Already Taken</span>
+                                                            @elseif ($bgColor != '')
+                                                                @if ($subjGrade == "DRP")
+                                                                    You dropped <span class="badge text-bg-warning">{{$failedSubjStr}}</span>
+                                                                @elseif($subjGrade == "INC")
+                                                                    You are INC in <span class="badge text-bg-warning">{{$failedSubjStr}}</span>
+                                                                @elseif($subjGrade == "AW" || $subjGrade == "UW")
+                                                                    You withdrew from the subject <span class="badge text-bg-warning">{{$failedSubjStr}} (Grade:{{$subjGrade}})</span>
+                                                                @else
+                                                                    You failed <span class="badge text-bg-warning">{{$failedSubjStr}} (Grade:{{$subjGrade}})</span>
+                                                                @endif
+                                                            @else
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <label class="checkbox">
+                                                                        <input type="checkbox" checked name="subjectsSelected[]" value="{{ $subject->id }}">
+                                                                    </label>
+                                                                </div>
+                                                            @endif
+                                                        </td>
+                                                    </tr>
                                                 @endif
                                             @endforeach
                                         @endif
@@ -413,7 +455,7 @@
                             </div>
                             <!-- /.card-body -->
                             <div class="card-footer">
-                                @if (Auth::user()->current_subjects_status == 0)
+                                @if (Auth::user()->current_subjects_status == 0 && $isNotTakenOrFailedCounter > 0)
                                     <div class="float-right">
                                         <button type="submit" value="{{Auth::user()->id}}" class="saveSubjects btn btn-sm btn-success">Save Subjects</button>
                                     </div> 
