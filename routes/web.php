@@ -55,6 +55,8 @@ Route::post('/student/add-subject', [StudentController::class, 'addsubject'])->n
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
 Route::group(['middleware' => ['auth', 'role:teacher||superadministrator']] ,function () {
+
+    Route::get('/pass-fail-data', [DashboardController::class, 'passfail'])->name('dashboard.passfail');
  
     // CRUD routes for SUBJECT
     Route::get('/subjects', [SubjectController::class, 'index'])->name('index.subject');
