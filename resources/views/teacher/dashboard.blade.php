@@ -93,13 +93,13 @@
         <div class="small-box bg-warning">
           <div class="inner">
             {{-- <h3>{{ $pendingEnrollments }}</h3> --}}
-            <h3>3</h3>
-            <p>Pending Enrollments</p>
+            <h3>{{ $pending }}</h3>
+            <p>Pending Enlistment</p>
           </div>
           <div class="icon">
             <i class="fas fa-hourglass-half"></i>
           </div>
-          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          <a href="/enlistment" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
       </div>
 
@@ -133,7 +133,7 @@
         <div class="small-box bg-primary">
           <div class="inner">
             {{-- <h3>{{ $totalSubjects }}</h3> --}}
-            <h3>T12</h3>
+            <h3>{{$totalSubjects}}</h3>
             <p>Subjects</p>
           </div>
           <div class="icon">
@@ -153,6 +153,31 @@
             <h3 class="card-title">Student Enlistment Chart</h3>
           </div>
           <div class="card-body">
+            <!-- Filters for Year Level & Course -->
+            <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+              <div>
+                  <label for="yearLevelFilter">Filter by Year Level:</label>
+                  <select id="yearLevelFilter" class="form-select" style="width: 200px;">
+                      <option value="all">All Year Levels</option>
+                      <option value="1">1st Year</option>
+                      <option value="2">2nd Year</option>
+                      <option value="3">3rd Year</option>
+                      <option value="4">4th Year</option>
+                  </select>
+              </div>
+
+              <div>
+                  <label for="courseFilter">Filter by Course:</label>
+                  <select id="courseFilter" class="form-select" style="width: 250px;">
+                      <option value="all">All Courses</option>
+                      @foreach($courses as $course)
+                          <option value="{{ $course->id }}">{{ $course->abbreviation }}</option>
+                      @endforeach
+                  </select>
+              </div>
+            </div>
+
+            <!-- Enlistment Chart -->
             <canvas id="enlistmentChart"></canvas>
           </div>
         </div>
@@ -190,7 +215,19 @@
                 <h5 class="card-title">Student Distribution Per Year Level</h5>
             </div>
             <div class="card-body">
+              <div>
+                  <label for="courseFilterInPie">Filter by Course:</label>
+                  <select id="courseFilterInPie" class="form-select" style="width: 250px;">
+                      <option value="all">All Courses</option>
+                      @foreach($courses as $course)
+                          <option value="{{ $course->id }}">{{ $course->abbreviation }}</option>
+                      @endforeach
+                  </select>
+              </div>
+              <div id="chartContainer">
                 <canvas id="yearLevelChart"></canvas>
+              </div>
+              
             </div>
         </div>
       </div>
@@ -217,25 +254,79 @@
     <script>
       $(document).ready(function () {
         // Enlistment Chart
+        // let ctx1 = $('#enlistmentChart')[0].getContext('2d');
+        // new Chart(ctx1, {
+        //   type: 'bar',
+        //   data: {
+        //     labels: ['Enlisted', 'Not Enlisted'],
+        //     datasets: [{
+        //       label: 'Students',
+        //       data: [{{$studentsEnlisted}}, {{$studentsNotEnlisted}}],
+        //       backgroundColor: ['#28a745', '#dc3545'],
+        //       borderColor: ['#218838', '#c82333'],
+        //       borderWidth: 1
+        //     }]
+        //   },
+        //   options: {
+        //     responsive: true,
+        //     scales: {
+        //       y: { beginAtZero: true }
+        //     }
+        //   }
+        // });
         let ctx1 = $('#enlistmentChart')[0].getContext('2d');
-        new Chart(ctx1, {
-          type: 'bar',
-          data: {
-            labels: ['Enlisted', 'Not Enlisted'],
-            datasets: [{
-              label: 'Students',
-              data: [{{$studentsEnlisted}}, {{$studentsNotEnlisted}}],
-              backgroundColor: ['#28a745', '#dc3545'],
-              borderColor: ['#218838', '#c82333'],
-              borderWidth: 1
-            }]
-          },
-          options: {
-            responsive: true,
-            scales: {
-              y: { beginAtZero: true }
-            }
-          }
+        let enlistmentChart;
+
+        // Function to fetch and update chart based on filters
+        function updateChart(yearLevel, course) {
+            $.ajax({
+                url: "{{ route('fetchEnlistmentData') }}",
+                type: "GET",
+                data: { year_level: yearLevel, course_id: course },
+                success: function (response) {
+                    let enlisted = response.studentsEnlisted;
+                    let notEnlisted = response.studentsNotEnlisted;
+
+                    // Destroy previous chart if it exists
+                    if (enlistmentChart) {
+                        enlistmentChart.destroy();
+                    }
+
+                    // Create new chart with updated data
+                    enlistmentChart = new Chart(ctx1, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Enlisted', 'Not Enlisted'],
+                            datasets: [{
+                                label: 'Students',
+                                data: [enlisted, notEnlisted],
+                                backgroundColor: ['#28a745', '#dc3545'],
+                                borderColor: ['#218838', '#c82333'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: { beginAtZero: true }
+                            }
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.log("Error fetching data:", error);
+                }
+            });
+        }
+
+        // Initial load (Show all year levels and all courses)
+        updateChart("all", "all");
+
+        // Event listener for filters
+        $('#yearLevelFilter, #courseFilter').on('change', function () {
+            let selectedYear = $('#yearLevelFilter').val();
+            let selectedCourse = $('#courseFilter').val();
+            updateChart(selectedYear, selectedCourse);
         });
 
         // Pass/Fail Table
@@ -269,36 +360,78 @@
 
 
         // Number of students per year level
-        var ctx = document.getElementById("yearLevelChart");
+        
+        var ctx = $("#yearLevelChart")[0].getContext("2d");
+
         if (!ctx) {
             console.error("yearLevelChart not found in the DOM.");
             return;
         }
 
-        // Sample dummy data for testing
-        var yearLevelCounts = {!! json_encode($yearLevelCounts) !!};
+        var yearLevelChart = null;
+        var isFetching = false;
+        function fetchYearLevelData(courseId) {
+            if (isFetching) return;
+            isFetching = true;
 
-        var yearLevelChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['First Year', 'Second Year', 'Third Year', 'Fourth Year'],
-                datasets: [{
-                    data: yearLevelCounts,
-                    backgroundColor: ['#4CAF50', '#FF9800', '#2196F3', '#F44336'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                aspectRatio: 1.0,
-                plugins: {
-                    legend: {
-                        position: 'top',
+            $.ajax({
+                url: "/fetch-year-level-data",
+                method: "GET",
+                data: { course_id: courseId },
+                dataType: "json",
+                success: function (response) {
+
+                    // Prevent infinite loops due to invalid data
+                    if (!response.yearLevelCounts || response.yearLevelCounts.length === 0) {
+                        console.error("No data for chart!");
+                        isFetching = false;
+                        return;
                     }
+
+                    // Destroy existing chart properly before creating a new one
+                    if (yearLevelChart) {
+                        yearLevelChart.destroy();
+                        $("#yearLevelChart").remove(); // Remove old canvas
+                        $("#chartContainer").append('<canvas id="yearLevelChart"></canvas>'); // Re-add canvas
+                        ctx = $("#yearLevelChart")[0].getContext("2d");
+                    }
+
+                    // Create new chart
+                    yearLevelChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['First Year', 'Second Year', 'Third Year', 'Fourth Year'],
+                            datasets: [{
+                                data: response.yearLevelCounts,
+                                backgroundColor: ['#4CAF50', '#FF9800', '#2196F3', '#F44336'],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { position: 'top' }
+                            }
+                        }
+                    });
+
+                    isFetching = false; // Allow next request
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching year level data:", error);
+                    isFetching = false; // Prevent getting stuck in a loop
                 }
-            }
+            });
+        }
+
+        // Listen for changes in the course filter dropdown
+        $("#courseFilterInPie").off("change").on("change", function () {
+            fetchYearLevelData($(this).val());
         });
+
+        // Initial Load with "all" courses
+        fetchYearLevelData("all");
       });
 
       

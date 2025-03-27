@@ -57,6 +57,9 @@ Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashb
 Route::group(['middleware' => ['auth', 'role:teacher||superadministrator']] ,function () {
 
     Route::get('/pass-fail-data', [DashboardController::class, 'passfail'])->name('dashboard.passfail');
+    Route::get('/fetch-enlistment-data', [DashboardController::class, 'fetchEnlistmentData'])->name('fetchEnlistmentData');
+    Route::get('/fetch-year-level-data', [DashboardController::class, 'fetchYearLevelData'])->name('fetch.year.level.data');
+
  
     // CRUD routes for SUBJECT
     Route::get('/subjects', [SubjectController::class, 'index'])->name('index.subject');

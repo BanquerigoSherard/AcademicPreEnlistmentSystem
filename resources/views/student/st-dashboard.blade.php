@@ -264,6 +264,9 @@
                                                 <td colspan="10">Your subject grades have been locked and moved to the GRADES tab.</td>
                                             </tr>
                                         @else
+                                            @php
+                                                $overallTotalUnits = 0;
+                                            @endphp
                                             @foreach ($subjects as $subject)
                                                 @php
                                                 $counter++;
@@ -279,6 +282,9 @@
                                                 @endforeach 
                                                 @if (Auth::user()->current_subjects_status == 1)
                                                     @if ($checked == "checked")
+                                                        @php
+                                                            $overallTotalUnits += $totalUnits;
+                                                        @endphp
                                                         <tr>
                                                             <td>{{$counter}}</td>
                                                             <td>{{ $subject->subject_code }}</td>
@@ -291,6 +297,9 @@
                                                     @endif
                                                 @elseif (Auth::user()->current_subjects_status == 2 && $academicTerm->grade_status == "Deactivated")
                                                     @if ($checked == "checked")
+                                                        @php
+                                                            $overallTotalUnits += $totalUnits;
+                                                        @endphp
                                                         <tr>
                                                             <td>{{$counter}}</td>
                                                             <td>{{ $subject->subject_code }}</td>
@@ -303,6 +312,9 @@
                                                     @endif
                                                 @elseif (Auth::user()->current_subjects_status == 2 && $academicTerm->grade_status == "Activated")
                                                     @if ($checked == "checked")
+                                                        @php
+                                                            $overallTotalUnits += $totalUnits;
+                                                        @endphp
                                                         <tr>
                                                             <td>{{$counter}}</td>
                                                             <td>{{ $subject->subject_code }}</td>
@@ -347,6 +359,7 @@
                                                         $pre_requisites = explode(',', $subject->pre_requisites);
                                                         $failedSubj = [];
                                                         $subjGrade = '';
+                                                        $overallTotalUnits += $totalUnits;
                                                     @endphp
                                                     @foreach ($allSubjects as $allSubject)
                                                         @if (in_array($allSubject->subject_code, $pre_requisites))
@@ -383,33 +396,6 @@
                                                     }
                                                     
                                                     @endphp
-                                                    {{-- <tr class="tRow {{$bgColor}}">
-                                                        <td>{{$counter}}</td>
-                                                        <td>{{ $subject->subject_code }}</td>
-                                                        <td>
-                                                            {{ $subject->description }}
-                                                        </td>
-                                                        <td>Lec: {{$subject->lec_units}} Lab: {{$subject->lab_units}}<br>Total: {{$totalUnits}}</td>
-                                                        <td>
-                                                            @if ($bgColor != '')
-                                                                @if ($subjGrade == "DRP")
-                                                                    You dropped <span class="badge text-bg-warning">{{$failedSubjStr}}</span>
-                                                                @elseif($subjGrade == "INC")
-                                                                    You are INC in <span class="badge text-bg-warning">{{$failedSubjStr}}</span>
-                                                                @elseif($subjGrade == "AW" || $subjGrade == "UW")
-                                                                    You withdrew from the subject <span class="badge text-bg-warning">{{$failedSubjStr}} (Grade:{{$subjGrade}})</span>
-                                                                @else
-                                                                    You failed <span class="badge text-bg-warning">{{$failedSubjStr}} (Grade:{{$subjGrade}})</span>
-                                                                @endif
-                                                            @else
-                                                                <div class="custom-control custom-checkbox">
-                                                                    <label class="checkbox">
-                                                                    <input type="checkbox" checked name="subjectsSelected[]" value="{{ $subject->id }}"></label>
-                                                                </div>
-                                                            @endif
-                                                            
-                                                        </td>
-                                                    </tr>  --}}
                                                     <tr class="tRow {{$bgColor}}">
                                                         <td>{{$counter}}</td>
                                                         <td>{{ $subject->subject_code }}</td>
@@ -439,7 +425,12 @@
                                                     </tr>
                                                 @endif
                                             @endforeach
+                                            <tr>
+                                                <td colspan="3" class="text-end fw-bold">Total Units:</td>
+                                                <td colspan="2" class="fw-bold">{{ $overallTotalUnits }}</td>
+                                            </tr>
                                         @endif
+                                        
                                     </tbody>
                                     <tfoot>
                                         <tr>

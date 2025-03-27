@@ -1093,10 +1093,10 @@
 
                     // <span>Status: </span><span class="badge badge-success enlistStat">Enlisted</span>
                     $('.enlistStat').html("");
-                    if(response.student.current_subjects != "" && response.student.current_subjects_status == 3){
+                    if(response.student.current_subjects != "" && response.student.current_subjects_status == 2){
                         $('.enlistStat').append('<span>Status: </span><span class="badge badge-success">Enlisted</span>');
                     }else{
-                        $('.enlistStat').append('<span>Status: </span><span class="badge badge-warning">???</span>');
+                        $('.enlistStat').append('<span>Status: </span><span class="badge badge-warning">Not Enlisted</span>');
                     }
 
 
