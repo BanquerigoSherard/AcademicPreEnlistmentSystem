@@ -46,6 +46,12 @@
 
     @if (Auth::user()->hasrole('superadministrator'))
       <li class="nav-item">
+        <a href="/teachers" class="nav-link">
+          <i class="nav-icon fas fa-users"></i>
+          <p>Teacher Accounts</p>
+        </a>
+      </li>
+      <li class="nav-item">
         <a href="/academicterm" class="nav-link">
             <i class="nav-icon fas fa-book"></i>
           <p>Academic Term</p>
@@ -64,29 +70,40 @@
   @endsection
 
   @section('page-content')
-      {{-- Academic Term --}}
-      <div class="row mb-3">
-        <div class="col-lg-12">
-          <div class="curr_academic_term">
-            <div class="row text-center">
-              <div class="col-lg-6 text-lg-end">
-                <h4>Current S.Y. <span class="text-bold">{{ $academicTerm->school_year }}</span></h4>
-              </div>
-              <div class="col-lg-6 text-lg-start">
-                @if ($academicTerm->semester == '1')
-                  <h4>Semester: <span class="text-bold">1st</span></h4>
-                @elseif ($academicTerm->semester == '2')
-                  <h4>Semester: <span class="text-bold">2nd</span></h4>
-                @else
-                  <h4>Semester: <span class="text-bold">Summer</span></h4>
-                @endif
-                
-              </div>
+    {{-- Academic Term --}}
+    <div class="row mb-3">
+      <div class="col-lg-12">
+        <div class="curr_academic_term">
+          <div class="row text-center">
+            <div class="col-lg-6 text-lg-end">
+              <h4>Current S.Y. <span class="text-bold">{{ $academicTerm->school_year }}</span></h4>
             </div>
-            
+            <div class="col-lg-6 text-lg-start">
+              @if ($academicTerm->semester == '1')
+                <h4>Semester: <span class="text-bold">1st</span></h4>
+              @elseif ($academicTerm->semester == '2')
+                <h4>Semester: <span class="text-bold">2nd</span></h4>
+              @else
+                <h4>Semester: <span class="text-bold">Summer</span></h4>
+              @endif
+              
+            </div>
           </div>
+          
         </div>
       </div>
+    </div>
+
+    <div class="row my-4">
+      <div class="col-lg-12">
+        <Button id="downloadAllReports" class="editTeacherBtn btn btn-sm btn-primary">
+          <span>Download All Reports</span>
+          <i class="fas fa-download"></i>
+      </Button>
+      </div>
+    </div>
+
+    
     <div class="row">
       {{-- Statistics Cards --}}
       <div class="col-lg-3">
@@ -125,7 +142,7 @@
           <div class="icon">
             <i class="fas fa-users"></i>
           </div>
-          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          <a href="/students" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
       </div>
 
@@ -139,7 +156,7 @@
           <div class="icon">
             <i class="fas fa-book"></i>
           </div>
-          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+          <a href="/subjects" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
         </div>
       </div>
 
@@ -253,27 +270,6 @@
   @section('scripts')
     <script>
       $(document).ready(function () {
-        // Enlistment Chart
-        // let ctx1 = $('#enlistmentChart')[0].getContext('2d');
-        // new Chart(ctx1, {
-        //   type: 'bar',
-        //   data: {
-        //     labels: ['Enlisted', 'Not Enlisted'],
-        //     datasets: [{
-        //       label: 'Students',
-        //       data: [{{$studentsEnlisted}}, {{$studentsNotEnlisted}}],
-        //       backgroundColor: ['#28a745', '#dc3545'],
-        //       borderColor: ['#218838', '#c82333'],
-        //       borderWidth: 1
-        //     }]
-        //   },
-        //   options: {
-        //     responsive: true,
-        //     scales: {
-        //       y: { beginAtZero: true }
-        //     }
-        //   }
-        // });
         let ctx1 = $('#enlistmentChart')[0].getContext('2d');
         let enlistmentChart;
 
@@ -356,9 +352,6 @@
             }
         });
 
-
-
-
         // Number of students per year level
         
         var ctx = $("#yearLevelChart")[0].getContext("2d");
@@ -434,6 +427,66 @@
         fetchYearLevelData("all");
       });
 
+      // Download Functions
+
+      $(document).ready(function () {
+      // Function to download the full dashboard as PDF
+      $('#downloadAllReports').click(function () {
+        // Create a new jsPDF instance
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        // Add a title
+        doc.setFontSize(18);
+        doc.text('Dashboard Reports', 10, 10);
+        doc.setFontSize(12);
+        doc.text('Generated on: ' + new Date().toLocaleString(), 10, 20);
+
+        // Add Current School Year and Semester
+        doc.text('Current S.Y. ' + '{{ $academicTerm->school_year }}', 10, 30);
+        doc.text('Semester: ' + '{{ $academicTerm->semester }}', 10, 40);
+
+        // Add Pending Enlistment Statistics
+        doc.text('Pending Enlistment: ' + '{{ $pending }}', 10, 50);
+
+        // Adding the charts: Convert canvas to image and add it to PDF
+        const enlistmentChartCanvas = document.getElementById('enlistmentChart');
+        if (enlistmentChartCanvas) {
+          const chartImage = enlistmentChartCanvas.toDataURL('image/png');
+          doc.addPage();
+          doc.text('Student Enlistment Chart', 10, 10);
+          doc.addImage(chartImage, 'PNG', 10, 20, 180, 100);
+        }
+
+        const yearLevelChartCanvas = document.getElementById('yearLevelChart');
+        if (yearLevelChartCanvas) {
+          const yearLevelChartImage = yearLevelChartCanvas.toDataURL('image/png');
+          doc.addPage();
+          doc.text('Student Distribution Per Year Level', 10, 10);
+          doc.addImage(yearLevelChartImage, 'PNG', 10, 20, 180, 100);
+        }
+
+        // Add Pass/Fail Table using html2pdf (convert table to PDF)
+        const passFailTable = document.getElementById('passFailTable');
+        if (passFailTable) {
+          doc.addPage();
+          doc.text('Pass/Fail Data', 10, 10);
+          
+          // Now convert the table to PDF using html2pdf
+          html2pdf()
+            .from(passFailTable)        // Convert the table to PDF
+            .toPdf()
+            .get('pdf')
+            .then(function (pdf) {
+              // Save the generated PDF
+              pdf.save('dashboard-reports.pdf');
+            });
+        } else {
+          // If no pass/fail table is found, we can still save the rest
+          doc.save('dashboard-reports.pdf');
+        }
+      });
+    });
       
 
     </script>

@@ -58,6 +58,12 @@
       </li>
   
       @if (Auth::user()->hasrole('superadministrator'))
+      <li class="nav-item">
+        <a href="/teacheraccounts" class="nav-link">
+          <i class="nav-icon fas fa-users"></i>
+          <p>Teacher Accounts</p>
+        </a>
+      </li>
         <li class="nav-item">
           <a href="/academicterm" class="nav-link active-link">
               <i class="nav-icon fas fa-book"></i>

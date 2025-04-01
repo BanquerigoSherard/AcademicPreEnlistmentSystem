@@ -6,6 +6,7 @@ use App\Http\Controllers\EnlistmentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ManageStudentController;
 use Illuminate\Support\Facades\Route;
 
@@ -103,6 +104,17 @@ Route::group(['middleware' => ['auth', 'role:teacher||superadministrator']] ,fun
     Route::get('/subjects/fetch-courses', [SubjectController::class, 'fetchCourses'])->name('subjects.fetchCourses');
     Route::post('/subjects/save-course', [SubjectController::class, 'saveCourse'])->name('subjects.saveCourse');
     Route::get('/subjects/delete-course/{id}', [SubjectController::class, 'deleteCourse'])->name('subjects.deleteCourse');
+
+    // Teacher Accounts Routes
+    Route::get('/teachers', [TeacherController::class, 'index']);
+
+    Route::get('/teachers/fetch-teachers', [TeacherController::class, 'fetch']);
+    Route::post('/teachers/save-teacher', [TeacherController::class, 'save']);
+    Route::get('/teachers/edit-teacher/{id}', [TeacherController::class, 'edit']);
+    Route::post('/teachers/update-teacher', [TeacherController::class, 'update']);
+    Route::delete('/teachers/delete-teacher/{id}', [TeacherController::class, 'destroy']);
+
+
 });
 // Save Subject
 Route::post('/enlistment/save-subjects/{id}', [EnlistmentController::class, 'savesubjects'])->name('enlistment.savesubjects');

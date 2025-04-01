@@ -58,6 +58,12 @@
       </li>
 
       @if (Auth::user()->hasrole('superadministrator'))
+      <li class="nav-item">
+        <a href="/teachers" class="nav-link">
+            <i class="nav-icon fas fa-users"></i>
+          <p>Teacher Accounts</p>
+        </a>
+      </li>
         <li class="nav-item">
           <a href="/academicterm" class="nav-link">
               <i class="nav-icon fas fa-book"></i>
@@ -343,6 +349,12 @@
             <div class="card card-secondary">
                 <div class="card-header">
                   <h3 class="card-title">Search Student</h3>
+                  
+                  <div class="student-info d-flex justify-content-end">
+                    <label>
+                        <input type="checkbox" id="filterPending"> Show Pending Enlistments Only
+                    </label>
+                  </div>
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body overflow-auto" style="max-height: calc(100vh - 36vh);">
@@ -352,6 +364,7 @@
                             <th>Student ID</th>
                             <th>Name</th>
                             <th>Year Level</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="students_tbody">
@@ -363,6 +376,7 @@
                             <th>Student ID</th>
                             <th>Name</th>
                             <th>Year Level</th>
+                            <th>Actions</th>
                         </tr>
                         </tr>
                     </tfoot>
@@ -522,56 +536,66 @@
                 $('#students_tbody').html('');
 
                 if(response.status == 200){
+                    var showPendingOnly = $('#filterPending').prop('checked');
+                    console.log(!showPendingOnly);
+                    
+
                     $.each(response.students, function(key, student){
                         if(student.student_id != null){
                             var yearLvl = '';
 
                             if(student.year_level == 1){
                                 yearLvl = '1st Year';
-                            }else if(student.year_level == 2){
+                            } else if(student.year_level == 2){
                                 yearLvl = '2nd Year';
-                            }else if(student.year_level == 3){
+                            } else if(student.year_level == 3){
                                 yearLvl = '3rd Year';
-                            }else if(student.year_level == 4){
+                            } else if(student.year_level == 4){
                                 yearLvl = '4th Year';
                             }
-                            $('#students_tbody').append('<tr>\
-                                <td>'+student.student_id+'</td>\
-                                <td>'+student.name+'</td>\
-                                <td>'+yearLvl+'\
-                                  <div class="btnWrapper d-flex justify-content-center align-items-center">\
-                                  <Button type="button" value="'+student.id+'" class="viewStudentBtn float-right btn btn-sm btn-warning me-2">\
-                                        <i class="fas fa-eye"></i>\
-                                  </Button>\
-                                  <Button type="button" value="'+student.id+'" class="addSubj float-right btn btn-sm btn-primary">\
-                                        <i class="fas fa-solid fa-book"></i>\
-                                  </Button>\
-                                  </div>\
-                                </td>\
-                            </tr>')
+
+                            var rowClass = student.current_subjects_status == 1 ? 'table-warning' : '';
+
+                            if (!showPendingOnly || student.current_subjects_status == 1) {
+                                $('#students_tbody').append('<tr class="'+rowClass+'">\
+                                    <td>'+student.student_id+'</td>\
+                                    <td>'+student.name+'</td>\
+                                    <td>'+yearLvl+'</td>\
+                                    <td>\
+                                        <div class="btnWrapper d-flex justify-content-center align-items-center">\
+                                            <button type="button" value="'+student.id+'" class="viewStudentBtn btn btn-sm btn-warning me-2">\
+                                                <i class="fas fa-eye"></i>\
+                                            </button>\
+                                            <button type="button" value="'+student.id+'" class="addSubj btn btn-sm btn-primary">\
+                                                <i class="fas fa-solid fa-book"></i>\
+                                            </button>\
+                                        </div>\
+                                    </td>\
+                                </tr>');
+                            }
                         }
                     });
 
-                    if ( $.fn.dataTable.isDataTable( '#studentsTable' ) ) {
-                        table = $('#studentsTable').DataTable();
-                    }else {
-                        $("#studentsTable").DataTable({
-                            "responsive": true, "lengthChange": false, "autoWidth": false,
-                            });
+                    if ( $.fn.dataTable.isDataTable('#studentsTable') ) {
+                        $('#studentsTable').DataTable().destroy();
                     }
 
-                        
-                        
-                    }
-
-
+                    $("#studentsTable").DataTable({
+                        "responsive": true, "lengthChange": false, "autoWidth": false,
+                    });
                 }
-
-                
-
+            }
         });
-
     }
+
+
+    $('#filterPending').change(function() {
+        console.log("test");
+        
+        fetchStudents(); 
+    });
+
+    fetchStudents(); 
 
     function fetchSubjects(id){
       $('#studentID').val(id);
