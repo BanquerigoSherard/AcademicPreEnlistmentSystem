@@ -7,8 +7,15 @@
       </a>
     </li>
 
-    {{-- Subjects --}}
     <li class="nav-item">
+      <a href="/subjects" class="nav-link">
+        <i class="nav-icon fas fa-book"></i>
+        <p>Subjects</p>
+      </a>
+    </li>
+
+    {{-- Subjects --}}
+    {{-- <li class="nav-item">
       <a href="#" class="nav-link">
         <i class="nav-icon fas fa-book"></i>
         <p>Subjects <i class="right fas fa-angle-left"></i></p>
@@ -28,7 +35,7 @@
           </a>
         </li>
       </ul>
-    </li>
+    </li> --}}
 
     <li class="nav-item">
       <a href="/students" class="nav-link">
@@ -435,7 +442,7 @@
         // Create a new jsPDF instance
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-
+ 
         // Add a title
         doc.setFontSize(18);
         doc.text('Dashboard Reports', 10, 10);
@@ -485,6 +492,8 @@
           // If no pass/fail table is found, we can still save the rest
           doc.save('dashboard-reports.pdf');
         }
+
+        
       });
     });
       

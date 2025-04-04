@@ -156,7 +156,7 @@ class StudentController extends Controller
         $grades = Grade::where([
             ['student_id', '=', $user->id],
             ['status', '=', '0'],
-        ])->get();
+        ])->get(); 
 
         if ($grades->isEmpty()) {
             return response()->json([

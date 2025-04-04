@@ -7,8 +7,14 @@
             </a>
         </li>
 
-        {{-- Subjects --}}
         <li class="nav-item">
+            <a href="/subjects" class="nav-link">
+              <i class="nav-icon fas fa-book"></i>
+              <p>Subjects</p>
+            </a>
+          </li>
+        {{-- Subjects --}}
+        {{-- <li class="nav-item">
             <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-solid fa-book"></i>
                 <p>Subjects <i class="right fas fa-angle-left"></i></p>
@@ -27,7 +33,7 @@
                     </a>
                 </li>
             </ul>
-        </li>
+        </li> --}}
 
         <li class="nav-item">
             <a href="/students" class="nav-link">

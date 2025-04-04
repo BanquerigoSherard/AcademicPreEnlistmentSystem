@@ -9,8 +9,14 @@
         </a>
       </li>
   
-      {{-- Subjects --}}
       <li class="nav-item">
+        <a href="/subjects" class="nav-link">
+          <i class="nav-icon fas fa-book"></i>
+          <p>Subjects</p>
+        </a>
+      </li>
+      {{-- Subjects --}}
+      {{-- <li class="nav-item">
         <a href="#" class="nav-link">
           <i class="nav-icon fas fa-solid fa-book"></i>
           <p>
@@ -37,7 +43,7 @@
             </a>
           </li>
         </ul>
-      </li>
+      </li> --}}
   
       <li class="nav-item">
         <a href="/students" class="nav-link">
@@ -197,85 +203,89 @@
       </div>
       <div class="row">
 
-        <div class="col-lg-6">
-            <div class="card card-secondary">
-                <div class="card-header">
-                  <h3 class="card-title">Set Academic Year</h3>
-                </div>
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <form id="setacademictermform" method="POST">
-
-                        <div class="row">
-                            <div class="col-sm-6">
-                            <!-- select -->
-                                {{-- <div class="form-group">
-                                    <label>School Year</label>
-                                    <input type="text" value="{{ $academicTerm->school_year }}" name="schoolyear" placeholder="School Year" id="schoolyear" class="form-control" required>
-                                </div> --}}
-
-                                @php
-                                  $year = date("Y");
-                                  $prev_year = $year - 1;
-                                  $nextYr = $year + 1;
-                                  $lastYr = $year + 2;
-                                @endphp
-
-                                <div class="form-group">
-                                  <label>School Year</label>
-                                  <div class="row">
-                                    <div class="col-6">
-                                      <select name="schoolyear" id="schoolyear" class="form-control">
-                                        <option selected disabled value="">Select School Year</option>
-                                        <option value="{{ $prev_year }}">{{ $prev_year }}</option>
-                                        <option value="{{ $year }}">{{ $year }}</option>
-                                        <option value="{{ $nextYr }}">{{ $nextYr }}</option>
-                                        <option value="{{ $lastYr }}">{{ $lastYr }}</option>
-                                    
-                                      </select>
-                                    </div>
-
-                                    <div class="col-1">
-                                      <span class="sep d-flex justify-content-center align-items-center h-100">-</span>
-                                    </div>
-
-                                    <div class="col-5">
-                                      <input type="text" disabled readonly name="nxtschoolyear" placeholder="School Year" id="nxtschoolyear" class="form-control">
-                                    </div>
-                                  </div>
-                              
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <label>Select Semester</label>
-                                    <select name="semester" id="semester" class="form-control" required>
-                                      @if ($academicTerm->semester == '1')
-                                        <option selected value="1">1st Semester</option>
-                                        <option value="2">2nd Semester</option>
-                                        <option value="3">Summer</option>
-                                      @elseif ($academicTerm->semester == '2')
-                                        <option value="1">1st Semester</option>
-                                        <option selected value="2">2nd Semester</option>
-                                        <option value="3">Summer</option>
-                                      @else
-                                        <option value="1">1st Semester</option>
-                                        <option value="2">2nd Semester</option>
-                                        <option selected value="3">Summer</option>
-                                      @endif
-                                    
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group float-right">
-                            <button type="submit" class="btn btn-success saveAyConfirm">Save</button>
-                        </div>
-
-                    </form>
-                </div>
+        <div class="col-lg-6">  
+          <div class="card card-secondary">
+            <div class="card-header">
+              <h3 class="card-title">Set Academic Year</h3>
             </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+                <form id="setacademictermform" method="POST">
+
+                  <div class="setAcads">
+                    <div class="row">
+                        <div class="col-sm-6">
+                        <!-- select -->
+                            {{-- <div class="form-group">
+                                <label>School Year</label>
+                                <input type="text" value="{{ $academicTerm->school_year }}" name="schoolyear" placeholder="School Year" id="schoolyear" class="form-control" required>
+                            </div> --}}
+
+                            @php
+                              $year = date("Y");
+                              $prev_year = $year - 1;
+                              $nextYr = $year + 1;
+                              $lastYr = $year + 2;
+                            @endphp
+
+                            <div class="form-group">
+                              <label>School Year</label>
+                              <div class="row">
+                                <div class="col-6">
+                                  <select name="schoolyear" id="schoolyear" class="form-control">
+                                    <option selected disabled value="">Select School Year</option>
+                                    <option value="{{ $prev_year }}">{{ $prev_year }}</option>
+                                    <option value="{{ $year }}">{{ $year }}</option>
+                                    <option value="{{ $nextYr }}">{{ $nextYr }}</option>
+                                    <option value="{{ $lastYr }}">{{ $lastYr }}</option>
+                                
+                                  </select>
+                                </div>
+
+                                <div class="col-1">
+                                  <span class="sep d-flex justify-content-center align-items-center h-100">-</span>
+                                </div>
+
+                                <div class="col-5">
+                                  <input type="text" disabled readonly name="nxtschoolyear" placeholder="School Year" id="nxtschoolyear" class="form-control">
+                                </div>
+                              </div>
+                          
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label>Select Semester</label>
+                                <select name="semester" id="semester" class="form-control" required>
+                                  @if ($academicTerm->semester == '1')
+                                    <option selected value="1">1st Semester</option>
+                                    <option value="2">2nd Semester</option>
+                                    <option value="3">Summer</option>
+                                  @elseif ($academicTerm->semester == '2')
+                                    {{-- <option value="1">1st Semester</option> --}}
+                                    <option selected value="2">2nd Semester</option>
+                                    <option value="3">Summer</option>
+                                  @else
+                                    {{-- <option value="1">1st Semester</option> --}}
+                                    {{-- <option value="2">2nd Semester</option> --}}
+                                    <option selected value="3">Summer</option>
+                                  @endif
+                                
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group float-right">
+                      <button type="submit" class="btn btn-success saveAyConfirm">Save</button>
+                  </div>
+
+                </form>
+            </div>
+          </div>
+
+            
         </div>
 
         
@@ -357,12 +367,31 @@
                         success: function (response) {
                             $('.confirmSetAY').text('Save').prop('disabled', false);
 
-                            Toast.fire({
-                                icon: 'success',
+                            if(response.status == 403){
+                              Swal.fire({
                                 title: response.message,
+                                html: `
+                                    <p>The following students have not submitted their grades:</p>
+                                    <div style="max-height: 110px; overflow-y: auto;">
+                                        <ul style="text-align:left; padding-left: 20px;">
+                                            ${response.students.map(student => `<li>${student.student_id} - ${student.name}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                `,
+                                icon: "warning"
                             });
 
+
+                            }else{
+                              Toast.fire({
+                                  icon: 'success',
+                                  title: response.message,
+                              });
+                            }
+
                             $(".curr_academic_term").load(location.href + " .curr_academic_term");
+                            $(".setAcads").load(location.href + " .setAcads");
+                            
                             $('#set-AY-confirm').modal('hide');
                         },
                         error: function (xhr) {
