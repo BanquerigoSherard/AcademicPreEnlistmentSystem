@@ -56,9 +56,11 @@ Route::post('/student/add-subject', [StudentController::class, 'addsubject'])->n
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
 Route::group(['middleware' => ['auth', 'role:teacher||superadministrator']] ,function () {
-
+    Route::get('/download-reports', [DashboardController::class, 'downloadReports'])->name('dashboard.downloadReports');
     Route::get('/pass-fail-data', [DashboardController::class, 'passfail'])->name('dashboard.passfail');
     Route::get('/fetch-enlistment-data', [DashboardController::class, 'fetchEnlistmentData'])->name('fetchEnlistmentData');
+    Route::get('/chart/enlisted-students', [DashboardController::class, 'getEnlistedStudents'])->name('enlisted-students');
+
     Route::get('/fetch-year-level-data', [DashboardController::class, 'fetchYearLevelData'])->name('fetch.year.level.data');
 
  

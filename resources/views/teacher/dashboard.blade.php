@@ -103,10 +103,10 @@
 
     <div class="row my-4">
       <div class="col-lg-12">
-        <Button id="downloadAllReports" class="editTeacherBtn btn btn-sm btn-primary">
+        <a target="_blank" href="/download-reports" id="downloadAllReports" class="editTeacherBtn btn btn-sm btn-primary">
           <span>Download All Reports</span>
           <i class="fas fa-download"></i>
-      </Button>
+      </a>
       </div>
     </div>
 
@@ -207,31 +207,6 @@
         </div>
       </div>
 
-      <div class="col-lg-6">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Pass/Fail Table</h3>
-            </div>
-            <div class="card-body">
-                <table id="passFailTable" class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Subject</th>
-                            <th>Passed</th>
-                            <th>Failed</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody> <!-- Data will be filled dynamically -->
-                </table>
-            </div>
-        </div>
-    </div>
-    
-      
-    </div>
-
-    <div class="row mt-4">
       {{-- Number of students per year level --}}
       <div class="col-lg-6">
         <div class="card">
@@ -255,10 +230,71 @@
             </div>
         </div>
       </div>
+     
+    </div>
+
+    <div class="row mt-4">
+
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Enlisted Students</h3>
+          </div>
+          <div class="card-body">
+            <!-- Filters for Year Level & Course -->
+            <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+              {{-- <div>
+                  <label for="schoolYearFilter">Filter by School Year:</label>
+                  <select id="schoolYearFilter" class="form-select" style="width: 200px;">
+                    @foreach($schoolYears as $schoolYear)
+                        <option value="{{ $schoolYear }}">{{ $schoolYear }}</option>
+                    @endforeach
+                  </select>
+              </div> --}}
+
+              <div>
+                  <label for="semesterFilter">Filter by Semester:</label>
+                  <select id="semesterFilter" class="form-select" style="width: 250px;">
+                      <option value="all">All Semester</option>
+                      <option value="1">1st Semester</option>
+                      <option value="2">2nd Semester</option>
+                      <option value="3">Summer</option>
+                  </select>
+              </div>
+            </div>
+
+            <!-- Enlistment Chart -->
+            <div id="chartContainerEnlistedStudents">
+              <canvas id="enlistedStudents"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Pass/Fail Table</h3>
+            </div>
+            <div class="card-body">
+                <table id="passFailTable" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Passed</th>
+                            <th>Failed</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody> <!-- Data will be filled dynamically -->
+                </table>
+            </div>
+        </div>
+      </div> 
   
 
       {{-- Quick Actions --}}
-      <div class="col-lg-6">
+      {{-- <div class="col-lg-6">
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Quick Actions</h3>
@@ -269,7 +305,8 @@
             <a href="/subjects" class="btn btn-info">Manage Subjects</a>
           </div>
         </div>
-      </div>
+      </div> --}}
+
     </div>
 
   @endsection
@@ -425,78 +462,84 @@
             });
         }
 
-        // Listen for changes in the course filter dropdown
         $("#courseFilterInPie").off("change").on("change", function () {
             fetchYearLevelData($(this).val());
         });
 
-        // Initial Load with "all" courses
         fetchYearLevelData("all");
-      });
 
-      // Download Functions
 
-      $(document).ready(function () {
-      // Function to download the full dashboard as PDF
-      $('#downloadAllReports').click(function () {
-        // Create a new jsPDF instance
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
- 
-        // Add a title
-        doc.setFontSize(18);
-        doc.text('Dashboard Reports', 10, 10);
-        doc.setFontSize(12);
-        doc.text('Generated on: ' + new Date().toLocaleString(), 10, 20);
+        // Enlisted Students Functions
+        var enlistedChart;
 
-        // Add Current School Year and Semester
-        doc.text('Current S.Y. ' + '{{ $academicTerm->school_year }}', 10, 30);
-        doc.text('Semester: ' + '{{ $academicTerm->semester }}', 10, 40);
+        function fetchEnlistedStudentsData() {
+            var schoolYear = $('#schoolYearFilter').val();
+            var semester = $('#semesterFilter').val();
 
-        // Add Pending Enlistment Statistics
-        doc.text('Pending Enlistment: ' + '{{ $pending }}', 10, 50);
-
-        // Adding the charts: Convert canvas to image and add it to PDF
-        const enlistmentChartCanvas = document.getElementById('enlistmentChart');
-        if (enlistmentChartCanvas) {
-          const chartImage = enlistmentChartCanvas.toDataURL('image/png');
-          doc.addPage();
-          doc.text('Student Enlistment Chart', 10, 10);
-          doc.addImage(chartImage, 'PNG', 10, 20, 180, 100);
-        }
-
-        const yearLevelChartCanvas = document.getElementById('yearLevelChart');
-        if (yearLevelChartCanvas) {
-          const yearLevelChartImage = yearLevelChartCanvas.toDataURL('image/png');
-          doc.addPage();
-          doc.text('Student Distribution Per Year Level', 10, 10);
-          doc.addImage(yearLevelChartImage, 'PNG', 10, 20, 180, 100);
-        }
-
-        // Add Pass/Fail Table using html2pdf (convert table to PDF)
-        const passFailTable = document.getElementById('passFailTable');
-        if (passFailTable) {
-          doc.addPage();
-          doc.text('Pass/Fail Data', 10, 10);
-          
-          // Now convert the table to PDF using html2pdf
-          html2pdf()
-            .from(passFailTable)        // Convert the table to PDF
-            .toPdf()
-            .get('pdf')
-            .then(function (pdf) {
-              // Save the generated PDF
-              pdf.save('dashboard-reports.pdf');
+            $.ajax({
+                url: "{{ route('enlisted-students') }}",
+                type: "GET",
+                data: { schoolYear: schoolYear, semester: semester },
+                success: function(response) {
+                    console.log("SY: "+response.labels);
+                    updateLineChart(response.labels, response.data);
+                },
+                error: function(xhr) {
+                    console.error("Failed to fetch chart data", xhr);
+                }
             });
-        } else {
-          // If no pass/fail table is found, we can still save the rest
-          doc.save('dashboard-reports.pdf');
         }
 
-        
+        function updateLineChart(labels, data) {
+            var ctx = document.getElementById('enlistedStudents').getContext('2d');
+
+            if (enlistedChart) {
+                enlistedChart.destroy();
+            }
+            
+            console.log(data);
+            
+
+            enlistedChart = new Chart(ctx, {
+                type: 'line',  // Use line chart
+                data: {
+                    labels: labels, // This will be the number of students on the x-axis
+                    datasets: [{
+                        label: 'Students',  // Label for the dataset
+                        data: data,  // This will be the school years on the y-axis
+                        fill: false,  // No fill for the line
+                        borderColor: '#4BC0C0',  // Line color
+                        tension: 0.4,  // Line curve tension
+                        borderWidth: 2  // Line thickness
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'School Year'  // Label for x-axis
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Number of Students'  // Label for y-axis
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        fetchEnlistedStudentsData();
+
+        $('#semesterFilter').on('change', fetchEnlistedStudentsData);
+
+
       });
-    });
-      
 
     </script>
   @endsection

@@ -28,7 +28,7 @@ class DashboardController extends Controller
                 $studentsNotEnlisted = User::whereHasRole('student')->where('current_subjects_status', '=', [0,1])->count();
                 $pending = User::whereHasRole('student')->where('current_subjects_status', '=', 1)->count();
 
-                // 🔹 Student Distribution Per Year Level
+                // Student Distribution Per Year Level
                 $yearLevelCounts = [
                     User::whereHasRole('student')->where('year_level', '=', '1')->count(),
                     User::whereHasRole('student')->where('year_level', '=','2')->count(),
@@ -39,9 +39,14 @@ class DashboardController extends Controller
                 $academicTerm = AcademicTerm::find(1);
                 $courses = Course::all();
 
+                $schoolYears = Grade::select('school_year')
+                        ->distinct()
+                        ->get()
+                        ->pluck('school_year');
+
                 return view('teacher.dashboard', compact(
                     'totalTeachers', 'totalStudents', 'totalSubjects',
-                    'yearLevelCounts', 'academicTerm', 'studentsEnlisted', 'studentsNotEnlisted', 'courses', 'pending'
+                    'yearLevelCounts', 'academicTerm', 'studentsEnlisted', 'studentsNotEnlisted', 'courses', 'pending', 'schoolYears'
                 ));
             } else {
                 return redirect()->route('st-dashboard');
@@ -96,19 +101,16 @@ class DashboardController extends Controller
     }
 
     public function fetchYearLevelData(Request $request) {
-        $courseId = $request->input('course_id'); // Get the selected course
+        $courseId = $request->input('course_id');
     
-        // Base query for students with role 'student'
         $query = User::whereHas('roles', function ($q) {
             $q->where('name', 'student');
         });
     
-        // Apply course filter if selected
         if ($courseId !== "all") {
             $query->where('course_id', $courseId);
         }
     
-        // Count students per year level
         $yearLevelCounts = [
             'First Year'  => (clone $query)->where('year_level', 1)->count(),
             'Second Year' => (clone $query)->where('year_level', 2)->count(),
@@ -117,6 +119,72 @@ class DashboardController extends Controller
         ];
     
         return response()->json(['yearLevelCounts' => array_values($yearLevelCounts)]);
+    }
+
+    public function getEnlistedStudents(Request $request) {
+        $schoolYear = $request->input('schoolYear');
+        $semester = $request->input('semester');
+        
+        // Query to get the count of students per school year and semester
+        $studentsData = Grade::when($semester !== 'all', function ($query) use ($semester) {
+                return $query->where('semester', $semester);
+            })
+            ->select('student_id', 'school_year', 'semester') // Select student_id, school_year, and semester
+            ->distinct()
+            ->get()
+            ->groupBy('school_year'); // Group by school year
+        
+        // Process the grouped data to count the students per school year
+        $studentsCount = $studentsData->map(function($group) {
+            return $group->count();
+        });
+        
+        // Prepare labels and data for the chart
+        $labels = $studentsCount->keys()->toArray(); // School years as labels (for y-axis)
+        $data = $studentsCount->values()->toArray(); // Counts as data (for x-axis)
+        
+        // Return the data as a JSON response
+        return response()->json([
+            'labels' => $labels, // School years
+            'data' => $data,     // Number of students
+        ]);
+    }
+    
+    
+
+
+    public function downloadReports(){
+        if (Auth::check()) {
+            if (Auth::user()->hasrole('teacher') || Auth::user()->hasrole('superadministrator')) {
+                // Fetch Teachers & Students
+                $totalTeachers = User::whereHasRole('teacher')->count();
+                $totalStudents = User::whereHasRole('student')->count();
+
+                // Fetch Total Subjects
+                $totalSubjects = Subject::count();
+
+                // Enlistment Status
+                $studentsEnlisted = User::whereHasRole('student')->where('current_subjects_status', '>=', 2)->count();
+                $studentsNotEnlisted = User::whereHasRole('student')->where('current_subjects_status', '=', [0,1])->count();
+                $pending = User::whereHasRole('student')->where('current_subjects_status', '=', 1)->count();
+
+                // Student Distribution Per Year Level
+                $yearLevelCounts = [
+                    User::whereHasRole('student')->where('year_level', '=', '1')->count(),
+                    User::whereHasRole('student')->where('year_level', '=','2')->count(),
+                    User::whereHasRole('student')->where('year_level', '=','3')->count(),
+                    User::whereHasRole('student')->where('year_level', '=','4')->count(),
+                ];
+
+                $academicTerm = AcademicTerm::find(1);
+                $courses = Course::all();
+
+                return view('teacher.reports', compact(
+                    'totalTeachers', 'totalStudents', 'totalSubjects',
+                    'yearLevelCounts', 'academicTerm', 'studentsEnlisted', 'studentsNotEnlisted', 'courses', 'pending'
+                ));
+            }
+        }
     }
     
 }

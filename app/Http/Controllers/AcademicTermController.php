@@ -28,7 +28,7 @@ class AcademicTermController extends Controller
         } else {
             $academicTerm = AcademicTerm::where('id', 1)->first();
             if ($academicTerm) {
-                $studentsWithPendingGrades = User::whereHasRole('student')->where('current_subjects_status', '!=', 3)->get();
+                $studentsWithPendingGrades = User::whereHasRole('student')->where('current_subjects_status', '=', 2)->get();
     
                 if ($studentsWithPendingGrades->isNotEmpty()) {
                     return response()->json([
