@@ -8,6 +8,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\ManageStudentController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,7 +23,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('auth.login');
+
+    if (Auth::check()) {
+        if (Auth::user()->hasrole('teacher') || Auth::user()->hasrole('superadministrator')) {
+            return redirect()->route('dashboard');
+        }else{
+            return redirect()->route('st-dashboard');
+        }
+    }else{
+        return view('auth.login');
+    }
+    
 }); 
 
 Route::group(['middleware' => ['auth', 'role:superadministrator']] ,function () {
@@ -56,7 +67,15 @@ Route::post('/student/add-subject', [StudentController::class, 'addsubject'])->n
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 
 Route::group(['middleware' => ['auth', 'role:teacher||superadministrator']] ,function () {
+    // Download REports routes
     Route::get('/download-reports', [DashboardController::class, 'downloadReports'])->name('dashboard.downloadReports');
+    Route::get('/download-enlistment', [DashboardController::class, 'downloadEnlistment'])->name('downloadEnlistment');
+    Route::get('/download-studentPerYearLvl', [DashboardController::class, 'downloadStudentPerYearLvl'])->name('downloadStudentPerYearLvl');
+    Route::get('/download-downloadEnlistedStudents', [DashboardController::class, 'downloadEnlistedStudents'])->name('downloadEnlistedStudents');
+    Route::get('/download-downloadPassFail', [DashboardController::class, 'downloadPassFail'])->name('downloadPassFail');
+    
+
+
     Route::get('/pass-fail-data', [DashboardController::class, 'passfail'])->name('dashboard.passfail');
     Route::get('/fetch-enlistment-data', [DashboardController::class, 'fetchEnlistmentData'])->name('fetchEnlistmentData');
     Route::get('/chart/enlisted-students', [DashboardController::class, 'getEnlistedStudents'])->name('enlisted-students');

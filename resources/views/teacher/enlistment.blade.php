@@ -670,7 +670,10 @@
                       
                     });
 
-                    if(response.subjects.length == 1){
+                    console.log(response.subjects.length);
+                    
+
+                    if(response.subjects.length == 0){
                         $('#subjects_tbody').append('<tr>\
                                 <td colspan="10">\
                                     <div class="imgCont">\

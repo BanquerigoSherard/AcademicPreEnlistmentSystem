@@ -122,7 +122,7 @@ class DashboardController extends Controller
     }
 
     public function getEnlistedStudents(Request $request) {
-        $schoolYear = $request->input('schoolYear');
+        // $schoolYear = $request->input('schoolYear');
         $semester = $request->input('semester');
         
         // Query to get the count of students per school year and semester
@@ -179,12 +179,43 @@ class DashboardController extends Controller
                 $academicTerm = AcademicTerm::find(1);
                 $courses = Course::all();
 
-                return view('teacher.reports', compact(
+                return view('teacher.reports.reports', compact(
                     'totalTeachers', 'totalStudents', 'totalSubjects',
                     'yearLevelCounts', 'academicTerm', 'studentsEnlisted', 'studentsNotEnlisted', 'courses', 'pending'
                 ));
             }
         }
+    }
+
+    public function downloadEnlistment(Request $request){
+        $year = $request->query('year');
+        $course = $request->query('course');
+
+        return view('teacher.reports.student-enlistment-report', compact(
+            'year', 'course'
+        ));
+    }
+
+    public function downloadStudentPerYearLvl(Request $request){
+        $course = $request->query('course');
+        $selectCourse = Course::find($course);
+        $coursename = $selectCourse->abbreviation;
+
+        return view('teacher.reports.student-per-year-report', compact(
+             'course', 'coursename'
+        ));
+    }
+
+    public function downloadEnlistedStudents(Request $request){
+        $semester = $request->query('semester');
+
+        return view('teacher.reports.enlisted-students-report', compact(
+             'semester'
+        ));
+    }
+
+    public function downloadPassFail(Request $request){
+        return view('teacher.reports.pass-fail-report' );
     }
     
 }

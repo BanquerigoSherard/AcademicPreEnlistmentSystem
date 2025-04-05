@@ -175,6 +175,10 @@
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Student Enlistment Chart</h3>
+            <div class="dbtn d-flex justify-content-end">
+              <button title="Download Report" id="downloadStudentEnlistment" class="btn btn-sm btn-primary"><i class="fas fa-download"></i></button>
+            </div>
+            
           </div>
           <div class="card-body">
             <!-- Filters for Year Level & Course -->
@@ -212,6 +216,9 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title">Student Distribution Per Year Level</h5>
+                <div class="dbtn d-flex justify-content-end">
+                  <button title="Download Report" id="downloadStudentPerYearLvl" class="btn btn-sm btn-primary"><i class="fas fa-download"></i></button>
+                </div>
             </div>
             <div class="card-body">
               <div>
@@ -239,6 +246,9 @@
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Enlisted Students</h3>
+            <div class="dbtn d-flex justify-content-end">
+              <button title="Download Report" id="downloadEnlistedStudents" class="btn btn-sm btn-primary"><i class="fas fa-download"></i></button>
+            </div>
           </div>
           <div class="card-body">
             <!-- Filters for Year Level & Course -->
@@ -275,6 +285,9 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Pass/Fail Table</h3>
+                <div class="dbtn d-flex justify-content-end">
+                  <button title="Download Report" id="downloadPassFail" class="btn btn-sm btn-primary"><i class="fas fa-download"></i></button>
+                </div>
             </div>
             <div class="card-body">
                 <table id="passFailTable" class="table table-bordered">
@@ -369,6 +382,18 @@
             updateChart(selectedYear, selectedCourse);
         });
 
+        $(document).on('click', '#downloadStudentEnlistment', function (e) {
+            e.preventDefault();
+
+            let selectedYear = $('#yearLevelFilter').val();
+            let selectedCourse = $('#courseFilter').val();
+
+            // Construct URL with query parameters
+            let url = "{{ route('downloadEnlistment') }}?year=" + encodeURIComponent(selectedYear) + "&course=" + encodeURIComponent(selectedCourse);
+
+            window.open(url, '_blank');
+        });
+
         // Pass/Fail Table
         $('#passFailTable').DataTable({
             processing: true,
@@ -395,6 +420,16 @@
                 info: "Showing _START_ to _END_ of _TOTAL_ subjects"
             }
         });
+
+        $(document).on('click', '#downloadPassFail', function (e) {
+            e.preventDefault();
+
+            let url = "{{ route('downloadPassFail') }}";
+
+            window.open(url, '_blank');
+        });
+
+        
 
         // Number of students per year level
         
@@ -468,20 +503,31 @@
 
         fetchYearLevelData("all");
 
+        $(document).on('click', '#downloadStudentPerYearLvl', function (e) {
+            e.preventDefault();
+            let courseFilterInPie = $('#courseFilterInPie').val();
+
+            // Construct URL with query parameters
+            let url = "{{ route('downloadStudentPerYearLvl') }}?course=" + encodeURIComponent(courseFilterInPie);
+
+            window.open(url, '_blank');
+        });
+
+        
+
 
         // Enlisted Students Functions
         var enlistedChart;
 
         function fetchEnlistedStudentsData() {
-            var schoolYear = $('#schoolYearFilter').val();
+            // var schoolYear = $('#schoolYearFilter').val();
             var semester = $('#semesterFilter').val();
 
             $.ajax({
                 url: "{{ route('enlisted-students') }}",
                 type: "GET",
-                data: { schoolYear: schoolYear, semester: semester },
+                data: { semester: semester },
                 success: function(response) {
-                    console.log("SY: "+response.labels);
                     updateLineChart(response.labels, response.data);
                 },
                 error: function(xhr) {
@@ -497,9 +543,6 @@
                 enlistedChart.destroy();
             }
             
-            console.log(data);
-            
-
             enlistedChart = new Chart(ctx, {
                 type: 'line',  // Use line chart
                 data: {
@@ -537,6 +580,16 @@
         fetchEnlistedStudentsData();
 
         $('#semesterFilter').on('change', fetchEnlistedStudentsData);
+
+        $(document).on('click', '#downloadEnlistedStudents', function (e) {
+            e.preventDefault();
+            let selectedSemester = $('#semesterFilter').val();
+
+            // Construct URL with query parameters
+            let url = "{{ route('downloadEnlistedStudents') }}?semester=" + encodeURIComponent(selectedSemester);
+
+            window.open(url, '_blank');
+        });
 
 
       });
