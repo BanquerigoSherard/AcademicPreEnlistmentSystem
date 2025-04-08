@@ -12,7 +12,7 @@
                             <div class="img" style="background-color: #035103">
                                 <div class="mx-2 text-white text-center d-flex justify-content-center align-items-center flex-column h-100" style="font-size: 1.5rem;">
                                     <img class="mb-2" height="150" src="images/ccsLogo.png" alt="CCS Logo">
-                                    <span>ACADEMIC PRE-ENLISTMENT SYSTEM</span>
+                                    <span>QuickPick: Automated Pre-enlistment System</span>
                                 </div>
                             </div>
                             <div class="login-wrap p-4 p-md-5">

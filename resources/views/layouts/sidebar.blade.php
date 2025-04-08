@@ -271,7 +271,7 @@
       <footer class="main-footer">
         <!-- To the right -->
         <div class="float-right d-none d-sm-inline">
-          Academic Pre-enlistment System
+          QuickPick: Automated Pre-enlistment System
         </div>
         <!-- Default to the left -->
         <strong>College of Computing Studies <a href=""></a></strong>
