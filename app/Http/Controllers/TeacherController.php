@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Mail\SendUserCredentials;
+use Illuminate\Support\Facades\Mail;
 
 use Illuminate\Http\Request;
 
@@ -25,7 +27,7 @@ class TeacherController extends Controller
             ]);
         }
     }
-
+ 
     // Save a new teacher
     public function save(Request $request)
     {
@@ -56,10 +58,15 @@ class TeacherController extends Controller
 
             $teacher->addRole('teacher');
 
+            $password = implode($password);
+
+            // Send credentials
+            Mail::to($teacher->email)->send(new SendUserCredentials($teacher, $password));
+
             return response()->json([
                 'status' => 200,
                 'message' => 'Teacher Added successfully',
-                'password' => implode($password)
+                'password' => $password
             ]);
         }
     }

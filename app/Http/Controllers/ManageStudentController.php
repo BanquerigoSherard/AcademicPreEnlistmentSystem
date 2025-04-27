@@ -12,6 +12,8 @@ use App\Models\Grade;
 use App\Models\Prospectus;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Mail\SendUserCredentials;
+use Illuminate\Support\Facades\Mail;
 
 class ManageStudentController extends Controller
 {
@@ -92,11 +94,16 @@ class ManageStudentController extends Controller
             ]);
     
             $user->addRole('student');
+
+            $password = implode($password);
+
+            // Send credentials
+            Mail::to($user->email)->send(new SendUserCredentials($user, $password));   
             
             return response()->json([
                 'status'=>200,
                 'message'=>'Student Added successfully',
-                'password'=>implode($password)
+                'password'=>$password,
              ]);
         }
 

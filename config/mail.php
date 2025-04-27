@@ -37,13 +37,22 @@ return [
         'smtp' => [
             'transport' => 'smtp',
             'url' => env('MAIL_URL'),
-            'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
-            'port' => env('MAIL_PORT', 587),
-            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
-            'timeout' => null,
-            'local_domain' => env('MAIL_EHLO_DOMAIN'),
+            // 'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
+            // 'port' => env('MAIL_PORT', 587),
+            // 'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            // 'username' => env('MAIL_USERNAME'),
+            // 'password' => env('MAIL_PASSWORD'),
+            // 'timeout' => null,
+            // 'local_domain' => env('MAIL_EHLO_DOMAIN'),
+
+            'host'=>'smtp.hostinger.com',
+            'port'=>465,
+            'encryption'=>'ssl',
+            'username'=>'support@quickpickpreenlistment.site',
+            'password'=>'Wr7s&7Jd5@e',
+            'timeout'=>null,
+            'local_domain'=>'quickpickpreenlistment.site'
+
         ],
 
         'ses' => [
@@ -108,8 +117,10 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        // 'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
+        // 'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address'=>'support@quickpickpreenlistment.site',
+        'name'=>"QuickPick: Academic Pre-Enlistment System"
     ],
 
     /*

@@ -64,9 +64,12 @@ Route::get('/personality-test-results/get-test-results/{id}', [StudentController
 // Add Subject Both in student and teacher
 Route::post('/student/add-subject', [StudentController::class, 'addsubject'])->name('student.addsubjects');
 
-Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+Route::group(['middleware' => ['auth', 'verified']] ,function () {
+    Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+});
 
-Route::group(['middleware' => ['auth', 'role:teacher||superadministrator']] ,function () {
+
+Route::group(['middleware' => ['auth', 'verified', 'role:teacher||superadministrator']] ,function () {
     // Download REports routes
     Route::get('/download-reports', [DashboardController::class, 'downloadReports'])->name('dashboard.downloadReports');
     Route::get('/download-enlistment', [DashboardController::class, 'downloadEnlistment'])->name('downloadEnlistment');
