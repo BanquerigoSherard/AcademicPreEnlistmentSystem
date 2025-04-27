@@ -138,6 +138,8 @@ Route::group(['middleware' => ['auth', 'verified', 'role:teacher||superadministr
     Route::post('/teachers/update-teacher', [TeacherController::class, 'update']);
     Route::delete('/teachers/delete-teacher/{id}', [TeacherController::class, 'destroy']);
 
+    Route::post('/teachers/change-password', [TeacherController::class, 'changePass']);
+
 
 });
 // Save Subject

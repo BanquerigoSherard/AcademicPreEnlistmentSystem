@@ -163,6 +163,37 @@
             </div>
         </div>
 
+        {{-- Change Password Modal --}}
+        <div class="modal fade" id="change-teacher-pass" tabindex="-1" aria-labelledby="changeTeacherPassLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="changeTeacherPassLabel">Change Password</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form id="changePassForm">
+                        <input type="hidden" name="idTeacher" id="idTeacher">
+                        <div class="modal-body">
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="new_password" name="password" placeholder="Password" required>
+                                <label for="new_password">New Password</label>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Password" required>
+                                <label for="confirm_password">Confirm Password</label>
+                            </div>
+        
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary" id="savePassword">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
 
         <!-- Add your modal structure here for editing teachers -->
 
@@ -234,8 +265,8 @@
                                 <td>' + teacher.name + '</td>\
                                 <td>' + teacher.email + '</td>\
                                 <td>\
-                                    <Button type="button" value="' + teacher.id + '" class="viewTeacherBtn btn btn-sm btn-warning">\
-                                        <i class="fas fa-eye"></i>\
+                                    <Button type="button" value="' + teacher.id + '" class="changePassBtn btn btn-sm btn-warning">\
+                                        <i class="fas fa-key"></i>\
                                     </Button>\
                                     <Button type="button" value="' + teacher.id + '" class="editTeacherBtn btn btn-sm btn-primary">\
                                         <i class="fas fa-pen"></i>\
@@ -499,6 +530,94 @@
                     console.log(xhr.responseText);
                 }
             });
+        });
+
+
+        $(document).on('click', '.changePassBtn', function () {
+            var teacherID = $(this).val();
+            $('#idTeacher').val(teacherID);
+            $('#change-teacher-pass').modal('show');
+        });
+
+        $(function () {
+            if ($('#changePassForm').length) {
+                $('#changePassForm').validate({
+                    submitHandler: function () {
+                    
+                        $('#savePassword').text('');
+                        $('#savePassword').prop('disabled', true);
+                        $('#savePassword').append('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
+
+                        let formdata = new FormData($('#changePassForm')[0]);
+
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }
+                        });
+                        
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/teachers/change-password",
+                            data: formdata,
+                            dataType: "json",
+                            contentType: false,
+                            processData: false,
+                            success: function (response) {
+                                $('#savePassword').text('Save');
+                                $('#savePassword').prop('disabled', false);
+
+                                Swal.fire({
+                                    title: response.message,
+                                    text: "Password: "+response.password,
+                                    icon: "success",
+                                });
+
+                                fetchTeachers(); 
+
+                                // Reset form
+                                $('#changePassForm')[0].reset();
+
+                                // Close the modal
+                                $('#change-teacher-pass').modal('hide');
+
+                            }
+                        });
+                    },
+                    rules: {
+                        password: {
+                            required: true,
+                            minlength: 8
+                        },
+                        confirm_password: {
+                            required: true,
+                            equalTo: "#new_password"
+                        }
+                    },
+                    messages: {
+                        password: {
+                            required: "Please enter a new password",
+                            minlength: "Password must be at least 8 characters long"
+                        },
+                        confirm_password: {
+                            required: "Please confirm your new password",
+                            equalTo: "Passwords do not match"
+                        }
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function (error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-floating').append(error);
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
+            }
         });
 
     </script>

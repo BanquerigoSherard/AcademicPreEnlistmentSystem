@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Mail\SendNewPassword;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
@@ -126,6 +127,35 @@ class TeacherController extends Controller
                 'status' => 200,
                 'message' => "Teacher Deleted Successfully",
             ]);
+        }
+    }
+
+
+    public function changePass(Request $request){
+        $request->validate([
+            'password' => 'required|min:8',
+            'confirm_password' => 'required|same:password',
+        ]);
+
+        try {
+            $teacher = User::find($request->idTeacher);
+            $teacher->password = Hash::make($request->password);
+            $teacher->save();
+
+            // Send credentials
+            Mail::to($teacher->email)->send(new SendNewPassword($teacher, $request->password));
+
+            return response()->json([
+                'message' => 'Password changed successfully!',
+                'password' => $request->password
+            ], 200);
+
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while changing password.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 
